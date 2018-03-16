@@ -4,10 +4,14 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
-import Element from 'element-ui'
-import '../static/css/element-variables.scss'
-
+// ui默认全部加载
+import Element from 'element-ui';
 Vue.use(Element)
+
+
+// ui按需加载，此时需在.bablerc配置plugin,详见element-ui文档
+// import { Button, Select} from 'element-ui';
+// Vue.component(Button.name, Button);
 
 Vue.config.productionTip = false
 
