@@ -5,8 +5,11 @@ Vue.use(Router)
 
 // 页面路径(相对 ../page)
 let config = [
-	'/home' ,                   // 首页
-    '/test' ,              // test
+	'/home/index' ,                   // 首页
+
+    '/test' ,                         // test
+
+    '/demo/todo',                     // demo -todo
 ]
 
 // 定义路由
@@ -23,52 +26,14 @@ config.forEach((value, index, arr) => {
     })
 })
 
-// 底部菜单切换
-// routes.push({
-//     path: '/',
-//     component: resolve => require(
-//         ['../components/footTabBar.vue'],
-//         resolve
-//     ),
-//     children: [
-//         // 首页(景点)
-//         {
-//             path: '/',
-//             component: resolve => require(
-//                 ['../page/home/index.vue'],
-//                 resolve
-//             ),
-//             meta: { keepAlive: true }
-//         },
-//         // 订单
-//         {
-//             path: 'order/list',
-//             component: resolve => require(
-//                 ['../page/order/list.vue'],
-//                 resolve
-//             ),
-//             meta: { keepAlive: true }
-//         },
-//         // 用户中心
-//         {
-//             path: 'user',
-//             component: resolve => require(
-//                 ['../page/user/index.vue'],
-//                 resolve
-//             ),
-//             meta: { keepAlive: true }
-//         }
-//     ]
-// })
-
 // 404 页面
-// routes.push({
-//     path: '*',
-//     component: resolve => require(['../page/404.vue'], resolve)
-// })
+routes.push({
+    path: '*',
+    component: resolve => require(['../page/404.vue'], resolve)
+})
 
 export default new Router({
-    mode: 'hash',              // HTML5 history 模式
+    mode: 'hash',                     // HTML5 history 模式
     linkActiveClass: 'active',
     routes: routes
 })

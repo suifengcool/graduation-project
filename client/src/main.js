@@ -3,6 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import { mapGetters, mapActions } from 'vuex'
+import store from './store'
 
 // ui默认全部加载
 import Element from 'element-ui';
@@ -16,9 +18,13 @@ Vue.use(Element)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+window.vm = new Vue({
   el: '#app',
   router,
-  components: { App },
-  template: '<App/>'
+  store,
+  render: h => h(App),
+  data: {
+    mapGetters,     // 全局引入 vuex mapGetters 函数
+    mapActions      // 全局引入 vuex mapActions 函数
+  }
 })

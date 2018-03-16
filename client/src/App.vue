@@ -6,37 +6,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
-</script>
-
-<script>
-  export default {
-    name: 'App',
-    data() {
-      return {
-        form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
-      }
-    },
-    methods: {
-      onSubmit() {
-        console.log('submit!');
-      }
-    }
-  }
-</script>
-
 <style lang="sass">
 @import '../static/style/element-variables.sass'
 #app
