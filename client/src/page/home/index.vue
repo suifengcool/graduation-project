@@ -38,7 +38,7 @@ export default {
       method: 'post',
       url: 'http://localhost:3000/user/register',
       data: {
-          account: 'xugang',
+          account: 'xugang11',
           passwd: 'xu19880816'
       }
    }).then(function (response) {

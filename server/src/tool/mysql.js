@@ -1,102 +1,34 @@
 'use strict';
 const mysql  = require( 'mysql' );
+const Config = require('../config');
 
-var pool  = mysql.createPool( {
+var connection  = mysql.createConnection({
     connectionLimit : 50,
-    host: 'sql.m77.vhostgo.com',
-    port: 3306,
-    user: 'suifengcool',
-    password: 'xu19880816',
-    database: 'suifengcool'
-    multipleStatements : true  //是否允许执行多条sql语句
-} );
+    host: Config.db.host,
+    port: Config.db.port,
+    user: Config.db.user,
+    password: Config.db.password,
+    database: Config.db.database,
+    multipleStatements : true             //是否允许执行多条sql语句
+});
 
 //将结果已对象数组返回
-var row=( sql , ...params )=>{
-    return new Promise(function(resolve,reject){
-        pool.getConnection(function(err,connection){
-            if(err){
-                reject(err);
-                return; 
-            }
-            connection.query( sql , params , function(error,res){
-                connection.release();
-                if(error){
-                    reject(error);
-                    return;
-                }
-                resolve(res);
-            });
-        });
-    });
+var row = ( sql , callback, ...params)=>{
+    connection.connect(function(err){
+        if(err){
+            console.log('与数据库连接失败')
+        }else{
+            console.log('与数据库连接成功');
+            connection.query(sql , params, function(err, rows, fields) {  
+                if (err) throw err; 
+                callback(rows)
+                connection.end(); 
+            });  
+        }
+    })
 };
-//返回一个对象
-var first=( sql , ...params )=>{
-    return new Promise(function(resolve,reject){
-        pool.getConnection(function(err,connection){
-            if(err){
-                reject(err);
-                return; 
-            }
-            connection.query( sql , params , function(error,res){
-                connection.release();
-                if(error){
-                    reject(error);
-                    return;
-                }
-                resolve( res[0] || null );
-            });
-        });
-    });
-};
-//返回单个查询结果
-var single=(sql , ...params )=>{
-    return new Promise(function(resolve,reject){
-        pool.getConnection(function(err,connection){
-            if(err){
-                reject(err);
-                return; 
-            }
-            connection.query( sql , params , function(error,res){
-                connection.release();
-                if(error){
-                    reject( error );
-                    return;
-                }
-                for( let i in res[0] )
-                {
-                    resolve( res[0][i] || null );
-                    return;
-                }
-                resolve(null);
-            });
-        });
-    });
-}
-//执行代码，返回执行结果
-var execute=(sql , ...params )=>{
-    return new Promise(function(resolve,reject){
-        pool.getConnection(function(err,connection){
-            if(err){
-                reject(err);
-                return; 
-            }
-            connection.query( sql , params , function(error,res){
-                connection.release();
-                if(error){
-                    reject(error);
-                    return;
-                }
-                resolve( res );
-            });
-        });
-    });
-}
 
 //模块导出
 module.exports = {
-    ROW     : row ,
-    FIRST   : first ,
-    SINGLE  : single ,
-    EXECUTE : execute 
+    ROW     : row 
 }
