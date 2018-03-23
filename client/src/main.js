@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import { mapGetters, mapActions } from 'vuex'
 import store from './store'
+import axios from 'axios'
+Vue.prototype.$http = axios
 
 // ui默认全部加载
 import Element from 'element-ui';

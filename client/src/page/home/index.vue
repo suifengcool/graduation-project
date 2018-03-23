@@ -31,7 +31,24 @@ export default {
     return {
       msg: 'Welcome to Vue2.0'
     }
-  }
+  },
+
+  created: function(){
+    this.$http({
+      method: 'post',
+      url: 'http://localhost:3000/user/register',
+      data: {
+          account: 'xugang',
+          passwd: 'xu19880816'
+      }
+   }).then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  },
 }
 </script>
 
