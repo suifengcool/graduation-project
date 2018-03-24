@@ -2,7 +2,7 @@
 const mysql  = require( 'mysql' );
 const Config = require('../config');
 
-var connection  = mysql.createConnection({
+var pool  = mysql.createPool({
     connectionLimit : 50,
     host: Config.db.host,
     port: Config.db.port,
@@ -12,23 +12,28 @@ var connection  = mysql.createConnection({
     multipleStatements : true             //是否允许执行多条sql语句
 });
 
-//将结果已对象数组返回
-var row = ( sql , callback, ...params)=>{
-    connection.connect(function(err){
-        if(err){
-            console.log('与数据库连接失败')
-        }else{
-            console.log('与数据库连接成功');
-            connection.query(sql , params, function(err, rows, fields) {  
-                if (err) throw err; 
-                callback(rows)
-                connection.end(); 
-            });  
-        }
+let query = ( sql, values ) => {
+    // 返回一个 Promise
+    return new Promise(( resolve, reject ) => {
+        pool.getConnection((err, connection) => {
+            if(err){
+                reject(err)
+            }else {
+                connection.query(sql, values, (err, rows) => {
+                    if(err){
+                        reject( err )
+                    }else {
+                        resolve( rows )
+                    }
+                    // 结束会话
+                    connection.release()
+                })
+            }
+        })
     })
-};
+}
 
 //模块导出
 module.exports = {
-    ROW     : row 
+    QUERY : query
 }

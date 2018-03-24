@@ -36,10 +36,25 @@ export default {
   created: function(){
     this.$http({
       method: 'post',
+      url: 'http://localhost:3000/user/login',
+      data: {
+          account: 'xugang',
+          passwd: 'xu19880816',
+          email: '371801080@qq.com'
+      }
+   }).then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    this.$http({
+      method: 'post',
       url: 'http://localhost:3000/user/register',
       data: {
-          account: 'xugang11',
-          passwd: 'xu19880816'
+          account: 'xugang2',
+          passwd: 'xu19880816',
+          email: '3718010801@qq.com'
       }
    }).then(function (response) {
       console.log(response);
