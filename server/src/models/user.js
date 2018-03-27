@@ -1,4 +1,4 @@
-const mysql = require('../tool/mysql.js');
+const mysql = require('../util/mysql.js');
 
 const checkAccount = async (account) => {
     const data = await mysql.QUERY(`SELECT * from user where user_name = '${account}'`,account);

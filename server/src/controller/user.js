@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken')
 const UserModel = require('../models/user')
 
+// 生成token密钥
+const secret = require('../config').secret
+
 class UserController {
     static constructor() {
 
@@ -29,7 +32,7 @@ class UserController {
 				}
 			})
 		}catch(err){
-			ctx.throw(err)
+			ctx.throw(err)  // 只有加上这个，才能在中间件捕捉到错误，并处理
 		}
     }
 
@@ -102,15 +105,16 @@ class UserController {
 						data: null
 					})
 				}else{
+					const token = jwt.sign({ account }, secret, { expiresIn: '1h' })
 					ctx.send({ 
 						code: 200, 
 						message: '登陆成功', 
-						data: {account} 
+						data: token 
 					})
 				}
 			})
 		}catch(err){
-			ctx.throw(err)   // 只有加上这个，才能在中间件捕捉到错误，并处理
+			ctx.throw(err)   
 		}
     }
 
@@ -119,11 +123,15 @@ class UserController {
     */
     static async test(ctx) {
 		let { account, passwd } = ctx.query
-		console.log('account:',account)
-		ctx.send({ 
-			code: 200, 
-			account: account
-		})
+
+		try{
+			ctx.send({ 
+				code: 200, 
+				account: account
+			})
+		}catch(err){
+			ctx.throw(err)  
+		}
 		
     }
 }

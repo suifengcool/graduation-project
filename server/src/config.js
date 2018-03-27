@@ -9,11 +9,11 @@ const config = {
             password: 'xu19880816',
             database: 'suifengcool'
         },
-        secret: 'elapse',                       // jwt生成token
-        salt: 'elapse-server2018',              // md5加密盐值
+        secret: 'suifeng',                   // jwt生成token私钥
+        salt: 'suifengcool123',              // md5加密盐值
         mail: {
-            user: '371801080@qq.com',
-            pass: 'suifengcoolxu123',
+            user: '371801080@qq.com',        // 邮箱账号
+            pass: 'elotuvicharkbhie',        // 邮箱授权码
         }
     },
 
@@ -27,11 +27,11 @@ const config = {
             password: 'xu19880816',
             database: 'suifengcool'
         },
-        secret: 'elapse',                  // jwt生成token
-        salt: 'elapse-server2018',         // md5加密盐值
+        secret: 'suifeng',                  // jwt生成token私钥
+        salt: 'suifengcool123',             // md5加密盐值
         mail: {
-            user: '371801080@qq.com',
-            pass: 'suifengcoolxu123',
+            user: '371801080@qq.com',       // 邮箱账号
+            pass: 'elotuvicharkbhie',       // 邮箱授权码
         }
     }
 }

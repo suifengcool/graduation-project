@@ -8,7 +8,7 @@ const gzip = require('./gzip')
 const error = require('./error')
 const request = require('./request')
 
-// const secret = require('../config').secret
+const secret = require('../config').secret
 
 module.exports = (app) => {
     app.use(bodyParser())
@@ -19,13 +19,22 @@ module.exports = (app) => {
     app.use(error())
     app.use(log())
 
-    // app.use(koaJwt({secret}).unless({path: [
-    //   /^\/user/, 
-    //   /^\/performence/,
-    //    /^\/article/, 
-    //    /^\/error/,
-    //    /^\/classify$/,
-    //    /^\/tag$/,
-    // ]}))
-    
+    // 使用koa-jwt中间件进行token验证,unless指明了`/user/login`不需要验证token（不然没法登录了）
+    app.use(
+        koaJwt({secret}).unless({
+            path: [/^\/user\/login/]
+        })
+    )
+
+    // 增加错误的监听处理
+    app.on("error", (err, ctx) => {
+        if(ctx && !ctx.headerSent && ctx.status < 500) {
+            ctx.status = 500
+        }
+        if(ctx && ctx.log && ctx.log.error) {
+            if(!ctx.state.logged) {
+                ctx.log.error(err.stack)
+            }
+        }
+    }) 
 }

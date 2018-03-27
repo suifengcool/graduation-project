@@ -37,7 +37,7 @@ export default {
     this.$http({
       method: 'post',
       url: 'http://localhost:3000/user/login',
-      data: JSON.stringify({
+      data: this.$qs.stringify({
           account: 'xugang',
           passwd: 'xu19880816',
           email: '371801080@qq.com'
@@ -64,7 +64,7 @@ export default {
     this.$http({
       method: 'post',
       url: 'http://localhost:3000/user/register',
-      data: JSON.stringify({
+      data: this.$qs.stringify({
           account: 'xugang2',
           passwd: 'xu19880816',
           email: '3718010801@qq.com'

@@ -1,6 +1,3 @@
-const zlib = require('zlib')
-
-
 module.exports = () => {
     return async (ctx, next) => {
 	    if(ctx.request.header.host.split(':')[0] === 'localhost' || ctx.request.header.host.split(':')[0] === '127.0.0.1'){
