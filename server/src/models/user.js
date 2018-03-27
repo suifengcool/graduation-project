@@ -33,8 +33,6 @@ const login = async (account, passwd) => {
     return data
 }
 
-
-
 module.exports = {
 	CHECKACCOUNT: checkAccount,
 	CHECKEMAIL: checkEmail,

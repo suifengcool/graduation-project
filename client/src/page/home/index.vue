@@ -37,25 +37,38 @@ export default {
     this.$http({
       method: 'post',
       url: 'http://localhost:3000/user/login',
-      data: {
+      data: JSON.stringify({
           account: 'xugang',
           passwd: 'xu19880816',
           email: '371801080@qq.com'
-      }
+      })
    }).then(function (response) {
       console.log(response);
     })
     .catch(function (error) {
       console.log(error);
     });
+
+    let account = 'xugang'
+    this.$http({
+      method: 'get',
+      url: `http://localhost:3000/user/test?account=${account}`,
+   }).then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+
     this.$http({
       method: 'post',
       url: 'http://localhost:3000/user/register',
-      data: {
+      data: JSON.stringify({
           account: 'xugang2',
           passwd: 'xu19880816',
           email: '3718010801@qq.com'
-      }
+      })
    }).then(function (response) {
       console.log(response);
     })

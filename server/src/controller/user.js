@@ -29,7 +29,7 @@ class UserController {
 				}
 			})
 		}catch(err){
-			console.log(err)
+			ctx.throw(err)
 		}
     }
 
@@ -56,7 +56,7 @@ class UserController {
 				}
 			})
 		}catch(err){
-			console.log(err)
+			ctx.throw(err)
 		}
     }
 
@@ -83,7 +83,7 @@ class UserController {
 				}
 			})
 		}catch(err){
-			console.log(err)
+			ctx.throw(err)
 		}
     }
 
@@ -110,8 +110,21 @@ class UserController {
 				}
 			})
 		}catch(err){
-			console.log(err)
+			ctx.throw(err)   // 只有加上这个，才能在中间件捕捉到错误，并处理
 		}
+    }
+
+    /*
+    * test
+    */
+    static async test(ctx) {
+		let { account, passwd } = ctx.query
+		console.log('account:',account)
+		ctx.send({ 
+			code: 200, 
+			account: account
+		})
+		
     }
 }
 

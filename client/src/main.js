@@ -6,7 +6,10 @@ import router from './router'
 import { mapGetters, mapActions } from 'vuex'
 import store from './store'
 import axios from 'axios'
+import qs from 'qs'
+
 Vue.prototype.$http = axios
+Vue.prototype.$qs = qs
 
 // ui默认全部加载
 import Element from 'element-ui';
