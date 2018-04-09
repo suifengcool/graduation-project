@@ -1,35 +1,34 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+// 入口js
 import Vue from 'vue'
-import App from './App'
-import router from './router'
 import { mapGetters, mapActions } from 'vuex'
+import VueRouter from 'vue-router'
+import App from './App'
+
+import Fetch from './util/fetch'
+import Config from './util/config'
+import routes from './router'
 import store from './store'
-import axios from 'axios'
-import qs from 'qs'
-
-Vue.prototype.$http = axios
-Vue.prototype.$qs = qs
-
-// ui默认全部加载
-import Element from 'element-ui';
-Vue.use(Element)
-
-
-// ui按需加载，此时需在.bablerc配置plugin,详见element-ui文档
-// import { Button, Select} from 'element-ui';
-// Vue.component(Button.name, Button);
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
-window.vm = new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App),
-  data: {
-    mapGetters,     // 全局引入 vuex mapGetters 函数
-    mapActions      // 全局引入 vuex mapActions 函数
-  }
+// 如果使用模块化机制编程， 要调用 Vue.use(VueRouter)
+Vue.use(VueRouter)
+
+// 创建 router 实例，然后传 `routes` 配置
+const router = new VueRouter({
+    mode: 'history',            // HTML5 history 模式
+    routes: routes
 })
+
+// 创建和挂载根实例 通过 router 配置参数注入路由
+window.vm = new Vue({
+    router,
+    store,
+    render: v => v(App),
+    data: {
+        config: Config,         // 全局注入配置
+        fetch: Fetch,           // fetch
+        mapGetters,             // 全局引入 vuex mapGetters 函数
+    	mapActions              // 全局引入 vuex mapActions 函数
+    }
+}).$mount('#app')

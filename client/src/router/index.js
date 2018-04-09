@@ -1,15 +1,20 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+/* 分块定义异步组件 使用 AMD 风格的 require
+ * const Home = resolve => require(['./pages/Home.vue'], resolve)
+ *
+ * 定义路由
+ * const routes = [
+ *     { path: '/', component: resolve => require(['./pages/Home.vue'], resolve) }
+ * ]
+ */
 
-Vue.use(Router)
-
-// 页面路径(相对 ../page)
+// 页面路径(相对 ./pages)
 let config = [
-	'/home/index' ,                   // 首页
+    '/home/index',                    // 首页
 
-    '/test' ,                         // test
 
-    '/demo/todo',                     // demo -todo
+    // demo
+    '/demo/index',                    // demo首页
+    '/demo/todo',                     // todo
 ]
 
 // 定义路由
@@ -20,7 +25,7 @@ config.forEach((value, index, arr) => {
     routes.push({
         path: value.replace(/(\/index|home\/index)$/g, ''),
         component: resolve => require(
-            ['../page' + value.replace(/\/(\:|\?)[A-z]+$/g, '') + '.vue'],
+            [ '../pages' + value.replace(/\/(\:|\?)[A-z]+$/g, '') + '.vue' ],
             resolve
         )
     })
@@ -29,11 +34,7 @@ config.forEach((value, index, arr) => {
 // 404 页面
 routes.push({
     path: '*',
-    component: resolve => require(['../page/404.vue'], resolve)
+    component: resolve => require(['../pages/404.vue'], resolve)
 })
 
-export default new Router({
-    mode: 'hash',                     // HTML5 history 模式
-    linkActiveClass: 'active',
-    routes: routes
-})
+export default routes

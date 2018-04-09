@@ -1,5 +1,5 @@
 <template>
-    <div class="notfound">
+    <div>
         <div class="content">
             <!-- <img src="../assets/404.png"> -->
             <p>玩脱了，页面找不到了(o?□?)o</p>
