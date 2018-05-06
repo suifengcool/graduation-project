@@ -1,11 +1,11 @@
 <template>
     <div class='videomanage content'>
-      <div class="content-title">视频列表<Button type="primary"><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
+      <div class="content-title">视频列表<Button type="primary"  round ><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
        <!-- 搜索 -->
       <div class="time_search">
         <div class="search kind">
           <!-- <h2>搜索：</h2> -->
-          <Input placeholder="请输入直播专题名称" style="width: 378px;" v-model="seek.topicsName"/>
+          <Input placeholder="请输入视频名称" style="width: 378px;" v-model="seek.topicsName"/>
         </div>
         <div class="block">
           <DatePicker
@@ -22,46 +22,48 @@
           <Button  icon="el-icon-refresh" style="margin-left:40px;background:#ecf5ff"   @click="reset">重置</Button>
         </div>
       </div>
-            <!-- 课程card   -->
-      <div class="offlind_card">
-        <Row class="row-bg">
-          <Col :span="6" v-for="(item,index) in  data.list" :key="item.id">
-            <Card>
-              <!-- <img src="~examples/assets/images/hamburger.png" class="image"> -->
-              <div class="offlind_info" @click="$router.push({path: 'detail',query: { id: item.id}})">
-                <span><img :src="item.homeImg" alt=""></span>
-                <div class="offlind_name">
-                  <div class="offlind_course_name">
-                    <p>{{item.name}}</p>
-                    <p style="color:#ff8f5d;text-align:right;">{{item.salePrice>0?item.salePrice+'元':'免费'}}</p>
-                  </div>
-                  <div class="offlind_inter">
-                    <span v-for="tag in (item.labels||'').split(/[,，]/)">{{tag}}</span>
-                  </div>
-                </div>
-                <div class="bottom">
-                  <div class="detail">
-                    <dl>
-                     <dd class="detailD"><img :src="item.teacherPic" alt=""><span><i class="iconfont icon-v"></i></span></dd>
-                     <dt><span>{{item.teacherName}}</span><span>{{item.teacherLevel}}</span></dt>
-                    </dl>
-                  </div>
-                  <div class="likenum">
-                    <dl>
-                      <dt><i class="iconfont icon-zan"></i></dt>
-                      <dd>{{item.followCount}}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-        <!-- <Row type="flex" class="row-bg" justify="space-around">
-
-        </Row> -->
-          <!-- <MyPagination :page="data.page" :pageSize="data.pageSize" :pageSizes="[8]" :total="data.total" :method="findList"/> -->
+      <div class="table_content">
+        <Table :data="option.list">
+          <TableColumn prop="acount" label="视频名称"/>
+          <TableColumn prop="url" label="视频地址" />
+          <TableColumn prop="password" label="分类"/>
+          <TableColumn prop="createTime" label="创建时间"/>           
+          <TableColumn label="操作" width="240" fixed="right">
+            <template slot-scope="scope">
+              <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
+              <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
+            </template>
+          </TableColumn>
+        </Table>
       </div>
+        <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone" title="新建视频">
+          <Form :model="formOption" label-position="right" label-width="80px">
+            <FormItem label="视频名称" >
+              <Input v-model="formOption.acount" />
+            </FormItem>
+            <FormItem label="分类">
+              <Select v-model="value" placeholder="请选择">
+                <Option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </Option>
+              </Select>
+            </FormItem>
+            <FormItem label="上传视频">
+              <Col :span="24">
+                <div class="uploadimgShow">
+                  <UploadFile :defaultPic="formOption.videoUrl || ''" method="success2" width='100%' height="180" @success2="successIdCardBack2"></UploadFile>
+                </div>
+              </Col>
+            </FormItem>                
+          </Form> 
+          <div slot="footer" class="dialog-footer">
+          <Button @click="admin.show = false">取消</Button>
+          <Button type="primary" @click="save">确定</Button>
+          </div>
+        </Dialog >
       <!-- <MyPagination :page="data.page" :pageSize="data.pageSize" :pageSizes="[8]" :total="data.total" :method="findList"/> -->
     </div>
 </template>
@@ -79,8 +81,14 @@ import {
   Table,
   TableColumn,
   Card,
+  Dialog,
+  Form,
+  FormItem,
+  Select,
+  Option, 
   } from 'element-ui';
 import MyPagination from '../../components/MyPagination.vue'
+import UploadFile from '../../components/UploadFile.vue'
 export default {
     name: 'videomanage',
     components: {
@@ -95,7 +103,13 @@ export default {
       Table,
       TableColumn,
       Card,
-      MyPagination
+      MyPagination,
+      Dialog,
+      Form,
+      FormItem,
+      Select,
+      Option,
+      UploadFile 
     },
     data () {
 		return {
@@ -105,25 +119,33 @@ export default {
         pageSize: 8,
         topicsName: null,//搜索
       },
-      data: {list:[{courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" },
-       {courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" },
-       {courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" },
-       {courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" },
-       {courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" },
-       {courseCatelogId: 0, followCount: 0, grade: "", gradeName: "",
-       id: 11, abels: '优势', name: "视频专题名称", salePrice: 0, subject: "", subjectName: "",
-       teacherId: 111, teacherLevel: "中级老师", teacherName: "问问", teacherPic: "" }]} 
-
+      formOption: {},
+      dialogFormVisible: false,
+      options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+      value: '',
+      option:{
+        list:[
+          {acount:15827605599,url:'http://www.baidu.com',password:'......',createTime:'2018.5.6',id:1},
+          {acount:15827605599,url:'http://www.baidu.com',password:'......',createTime:'2018.5.6',id:2},
+          {acount:15827605599,url:'http://www.baidu.com',password:'.....',createTime:'2018.5.6',id:3},
+          {acount:15827605599,url:'http://www.baidu.com',password:'......',createTime:'2018.5.6',id:4},
+        ]
+      }
 		}
     },
 
@@ -132,6 +154,9 @@ export default {
     },
 
     methods: {
+      edit() {
+        this.dialogFormVisible = true 
+      },
       schedule() {
 
       },
@@ -139,6 +164,9 @@ export default {
 
       },
      reset() {
+
+     },
+     save() {
 
      } 
 
@@ -160,141 +188,9 @@ export default {
       display: flex
       align-items: center;
       margin-bottom: 20px
-    .offlind_card
-      .row-bg 
-        margin-left: -12px
-        margin-right: -12px
-      .offlind_info
-        width: 100%
-        height: auto
-        border-radius: 5px
-        box-shadow: 1px 10px 7px #e8f6ff
-        background: #fff
-        cursor: pointer
-        > span 
-          display: inline-block
-          width: 100%
-          height: 120px
-          img 
-            vertical-align: top
-            width: 100%
-            height: 100%
-        .offlind_name 
-          position: relative
-          padding: 0 10px
-          .offlind_course_name 
-            text-align: left
-            color: #434343
-            width: 100%
-            height: 55px
-            font-size: 16px
-            line-height: 26px
-            margin-top: 15px
-            font-weight: bold
-            overflow: hidden
-            text-overflow: ellipsis
-            display: -webkit-box
-            -webkit-box-orient: vertical
-            -webkit-line-clamp: 2
-            display: flex
-            justify-content: space-between
-            align-items: center
-            > p 
-              width: 162px
-              overflow: hidden
-              text-overflow: ellipsis
-              display: -webkit-box
-              -webkit-box-orient: vertical
-              -webkit-line-clamp: 2
-          .offlind_inter 
-            display: flex
-            flex-flow: wrap
-            justify-content: flex-start
-            overflow: hidden
-            width: 250px
-            height: 68px
-            align-items: center
-            span 
-              display: inline-block
-              color: #5cbefc
-              width: 70px
-              height: 24px
-              text-align: center
-              line-height: 24px
-              background-color: #e4f4ff
-              border-radius: 5px
-              margin-right: 10px
-              margin-bottom: 10px
-              font-size: 12px
-          .appling 
-            width: 80px
-            height: 30px
-            line-height: 30px
-            text-align: center
-            font-size: 12px
-            padding: 0
-        .bottom 
-          padding: 0 10px 20px
-          display: flex
-          align-items: center
-          justify-content: space-between
-          .detail 
-            display: inherit
-            dl 
-              display: inherit
-              align-items: center
-              dd 
-                width: 40px
-                height: 40px
-                border-radius: 50%
-                background-color: #ccbcab
-              .detailD 
-                position: relative
-                >img
-                    width: 100%
-                    height: 100%
-                    border-radius: 50%  
-                > span 
-                  position: absolute
-                  width: 15px
-                  height: 15px
-                  display: inline-block
-                  text-align: center
-                  bottom: -1px
-                  right: -2px
-                  background: #4ab7fc
-                  border-radius: 50%
-                  line-height: 15px
-                  .iconfont 
-                    color: #fff
-                    font-size: 12px
-              dt > span:nth-of-type(1)
-                color: #333333
-                font-size: 14px
-                margin-right: 10px
-                margin-left: 13px
-              dt > span:nth-of-type(2)
-                color: #ffa42f
-                font-size: 12px
-          .likenum
-            font-size: 18px
-            color: #333333
-            display: inherit
-            dl
-              display: inherit
-              align-items: center
-              .iconfont
-                color: #aaaaaa
-                font-size: 18px
 </style>
 <style lang="sass">
 .videomanage
-  .el-card
-    border: none
-    border-radius: none
-    background: none
-  .el-card.is-always-shadow 
-    box-shadow: none
   .el-date-editor--datetimerange.el-input__inner
     width: 100%
   .el-date-editor .el-range-separator
@@ -329,5 +225,8 @@ export default {
     .row-bg 
       .el-card__body 
         padding: 0 12px 20px
+.dialogone
+  width: 600px !important;  
 </style>
+
 
