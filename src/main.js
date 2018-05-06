@@ -2,7 +2,6 @@ import 'babel-polyfill'
 // 入口js
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 import App from './App'
 
 import Fetch from './util/fetch'
