@@ -73,7 +73,7 @@ export default {
     font-size: 14px
     .login
         position: absolute
-        top: 40%
+        top: 45%
         left: 50%
         margin: -160px 0 0 -160px
         width: 320px
