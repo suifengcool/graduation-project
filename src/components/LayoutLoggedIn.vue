@@ -22,18 +22,18 @@ export default{
     components:{ Menu },
 
     created(){
-        let userInfo = JSON.parse(window.localStorage.getItem('UserInfo'))
-        if(!userInfo){
-            vm.$message({
-                type: 'warning',
-                message: '请先登录',
-                duration: 1500,
-                onClose: ()=>{
-                    vm.$router.replace('/home/login')
-                }
-            })
+        // let userInfo = JSON.parse(window.localStorage.getItem('UserInfo'))
+        // if(!userInfo){
+        //     vm.$message({
+        //         type: 'warning',
+        //         message: '请先登录',
+        //         duration: 1500,
+        //         onClose: ()=>{
+        //             vm.$router.replace('/home/login')
+        //         }
+        //     })
             
-        }
+        // }
     }
 }
 </script>

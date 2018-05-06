@@ -1,12 +1,17 @@
 <template>
     <div class='home-login'>
-        <Form class="login" :rules="rules" ref="loginForm">
+        <Form class="login" :rules="rules" ref="loginForm" :model="form" status-icon>
+            <div class="panfish">
+                <img v-if="imgType == 1" class="normal" src="https://gold-cdn.xitu.io/v3/static/img/normal.0447fe9.png" alt="">
+                <img v-if="imgType == 2" class="greeting" src="https://gold-cdn.xitu.io/v3/static/img/greeting.1415c1c.png" alt="">
+                <img v-if="imgType == 3" class="blindfold" src="https://gold-cdn.xitu.io/v3/static/img/blindfold.58ce423.png" alt="">
+            </div>
             <h3>登录</h3>
             <FormItem label=""   prop="userName">
-                <Input v-model="userName" auto-complete="off" prefix-icon="Icon-date" placeholder="Username" size="medium" />
+                <Input type="text" class="userNameInput" v-model="form.userName" auto-complete="off" prefix-icon="Icon-date" placeholder="Username" size="medium" />
             </FormItem>
             <FormItem  label=""  prop="password">
-                <Input v-model="password" auto-complete="off" prefix-icon="Icon-date" placeholder="Password" size="medium" />
+                <Input type="password" v-model="form.password" auto-complete="off" prefix-icon="Icon-date" placeholder="Password" size="medium" />
             </FormItem>
             <FormItem class="btn">
                 <Button class="active" @click="submit">登录</Button>
@@ -28,8 +33,11 @@ export default {
     },
     data () {
 		return {
-            userName: '',
-            password: '',
+            imgType: 1,
+            form:{
+                userName: '',
+                password: ''
+            },
             rules: {
                 userName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
@@ -44,6 +52,7 @@ export default {
         submit() {
 
             this.$refs.loginForm.validate(val => {
+                console.log('val:',val)
                     
             })
         },
@@ -54,8 +63,8 @@ export default {
 .home-login
     height: 100%
     background: url('../../assets/img/bg.jpg') center center no-repeat
-    background-size: cover
-    font-size: 12px
+    background-size: 120%
+    font-size: 14px
     .login
         position: absolute
         top: 40%
@@ -65,15 +74,28 @@ export default {
         height: 320px
         padding: 36px
         box-shadow: 0 0 100px rgba(0, 0, 0, 0.08)
+        img
+            width: 120px
+            position: absolute
+            top: 10px
+            left: 50%
+            z-index: 1
+        .normal
+            transform: translate(-50%,-83%)
+        .greeting
+            transform: translate(-50%,-75.8%)
+        .blindfold
+            transform: translate(-50%,-75%)
+
 </style>
 <style lang="sass">
     .home-login
         h3
-            text-align: center
             height: 40px
             line-height: 40px
             margin-bottom: 24px
             color: #666
+            font-size: 16px
         .el-input__inner 
             display: inline-block
             padding: 4px 7px
@@ -106,4 +128,8 @@ export default {
             .active
                 color: #fff
                 background: #108ee9
+        input[type=text]:focus
+            display: inline-block
+        input[type=text]:focus .normal
+            display: none
 </style>

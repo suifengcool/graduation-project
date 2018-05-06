@@ -7,8 +7,8 @@
         <!-- <Badge class="mark" :value="UnreadLength" /> -->
       </DropdownItem>
       </span>
-      <span><img :src="data.logo || '../../../static/img/admin.png'" onerror="javascript:this.src='../../../static/img/admin.png';"/></span>
-      <span>{{data.name}}</span>
+      <span><img src='../../assets/img/head.png' onerror="javascript:this.src='../../assets/img/head.png';"/></span>
+      <span>小可爱</span>
       <span>
         <Tooltip class="item" effect="dark" content="退出登录" placement="bottom-start">
           <i class="iconfont icon-dianyuan" @click="quit"></i>

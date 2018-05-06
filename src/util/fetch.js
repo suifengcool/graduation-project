@@ -35,7 +35,7 @@ Axios.interceptors.response.use((response) => {
         duration: 1500,
         onClose: ()=>{
           window.localStorage.removeItem('UserInfo')
-          vm.$router.replace('/home/login')
+          vm.$router.replace('/login')
         }
       })
     }
