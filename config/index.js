@@ -11,11 +11,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/rest': {
-            target: 'http://xxb-open.china-start.cn:8050/',
+        '/api': {
+            target: 'http://23.234.15.217:80/',
             changeOrigin: true,  // 为true,则本地会虚拟一个服务端接收你的请求并代你发送该请求，这样就不会有跨域问题
             pathRewrite: {
-                '^/rest': '/rest'
+                '^/api': ''
             }
         }
     },

@@ -52,9 +52,12 @@ export default {
         submit() {
 
             this.$refs.loginForm.validate(val => {
-                console.log('val:',val)
-                    
-            })
+                if(val){
+                    vm.fetch.post('/users/cookie',{ ...this.form }).then(data=>{
+                        console.log('data:',data)
+                    })
+                } 
+            })  
         },
 	}
 }
