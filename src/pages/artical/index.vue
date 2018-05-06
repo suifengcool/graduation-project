@@ -1,18 +1,21 @@
 <template>
     <div class='artical'>
-		我是文章管理页
+		<vue-editor v-model="content"></vue-editor>
     </div>
 </template>
 
 <script>
 import { Button} from 'element-ui';
+import { VueEditor } from 'vue2-editor'
 export default {
     name: 'notFound',
     components: {
-    	Button
+    	Button,
+        VueEditor
     },
     data () {
 		return {
+            content: '<h1>Some initial content</h1>'
 		}
     },
 

@@ -12,7 +12,7 @@ import {Message} from 'element-ui'
 
 import './assets/css/common.css'
 import './assets/css/home.less'
-import 'element-ui/lib/theme-chalk/index.css'
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
 

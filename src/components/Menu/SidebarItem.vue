@@ -73,7 +73,7 @@ export default {
       background-color: #51c5ff;
     }
     background-color: #51c5ff;
-    color: #ffffff;
+    color: #fff;
   }
 }
 }
