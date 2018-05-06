@@ -3,6 +3,7 @@
     <div class="nav_layout">
       <h1 class="nav_logo" @click="$router.push({path: '/'})">
         <div class="imgBox">
+          树莓后天管理系统
           <!-- <img src="/static/img/logo.png" alt="LOGO"> -->
         </div>
         学训宝
@@ -111,12 +112,16 @@ export default {
     display: flex;
     justify-content: space-between;
     .nav_logo {
-      width: 190px;
+      width: 250px;
       height: 100%;
       position: relative;
       overflow: hidden;
       cursor: pointer;
       .imgBox{
+        font-family: STKaiti; 
+        line-height: 80px;
+        color: #FF9500;
+        font-size: 30px;
         height: 100%;
          img {
         width: 100%;

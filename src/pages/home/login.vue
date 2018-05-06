@@ -128,6 +128,7 @@ export default {
                 font-size: 14px
                 outline: none
                 cursor: pointer
+                padding: 0px
             .active
                 color: #fff
                 background: #108ee9
