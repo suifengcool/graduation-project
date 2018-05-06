@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { Button,Row,Col,Collapse,CollapseItem,Input} from 'element-ui'
+import { Button,Row,Col,Collapse,CollapseItem,Input,MessageBox} from 'element-ui'
 import Avaters from "../../components/Avaters.vue"
 import { detailTimeFilter} from "../../util/filter"
 export default {
@@ -74,7 +74,8 @@ export default {
       Col,
       Collapse,
       CollapseItem,
-      Input
+      Input,
+      MessageBox
     },
     data () {
 		return {
@@ -235,49 +236,49 @@ export default {
         })
       },
       delSon(res){
-        vm.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
           center: true
         }).then(() => {
-          delgoodsCategory(res.id).then((data)=>{ //获取商品分类
-           if(data.code==815||data.code==811){
-              return;
-            }
-            this.init()
-            this.$message({
+          // delgoodsCategory(res.id).then((data)=>{ //获取商品分类
+          //  if(data.code==815||data.code==811){
+          //     return;
+          //   }
+          //   this.init()
+             vm.$message({
               type: 'success',
               message: '删除成功!'
             });
-          });
+          // });
         }).catch(() => {
-          this.$message({
+          vm.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
       },
       delDad(res){
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+       MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
           center: true
         }).then(() => {
-          delgoodsCategory(res.id).then((data)=>{ 
-            if(data.code==815||data.code==811){
-              return;
-            }
-            this.init()
-            this.$message({
+          // delgoodsCategory(res.id).then((data)=>{ 
+          //   if(data.code==815||data.code==811){
+          //     return;
+          //   }
+          //   this.init()
+            vm.$message({
               type: 'success',
               message: '删除成功!'
             });
-          })
+          // })
 
         }).catch(() => {
-          this.$message({
+          vm.$message({
             type: 'info',
             message: '已取消删除'
           });
