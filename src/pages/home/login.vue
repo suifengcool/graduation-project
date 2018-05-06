@@ -8,15 +8,15 @@
             </div>
             <h3>登录</h3>
             <FormItem label=""   prop="userName">
-                <Input type="text" class="userNameInput" v-model="form.userName" auto-complete="off" prefix-icon="Icon-date" placeholder="Username" size="medium" />
+                <Input type="text" class="userNameInput" v-model="form.userName" auto-complete="off" prefix-icon="Icon-date" placeholder="Username" size="medium" @focus="focus(2)" @blur="imgType = 1"/>
             </FormItem>
             <FormItem  label=""  prop="password">
-                <Input type="password" v-model="form.password" auto-complete="off" prefix-icon="Icon-date" placeholder="Password" size="medium" />
+                <Input type="password" v-model="form.password" auto-complete="off" prefix-icon="Icon-date" placeholder="Password" size="medium" @focus="focus(3)" @blur="imgType = 1"/>
             </FormItem>
-            <FormItem class="btn">
+            <div class="btn">
                 <Button class="active" @click="submit">登录</Button>
-                <Button>回到首页</Button>
-            </FormItem>
+                <Button @click="$router.push('/')">回到首页</Button>
+            </div>
         </Form>
     </div>
 </template>
@@ -49,8 +49,11 @@ export default {
     },
 
     methods: {
-        submit() {
+        focus(index){
+            this.imgType = index
+        },
 
+        submit() {
             this.$refs.loginForm.validate(val => {
                 if(val){
                     vm.fetch.post('/users/cookie',{ ...this.form }).then(data=>{
@@ -98,41 +101,13 @@ export default {
             line-height: 40px
             margin-bottom: 24px
             color: #666
-            font-size: 16px
-        .el-input__inner 
-            display: inline-block
-            padding: 4px 7px
-            margin-bottom: 24px
-            width: 100%
-            height: 32px
-            line-height: 32px
-            color: rgba(0, 0, 0, 0.65)
-            background-color: #fff
-            border: 1px solid #d9d9d9
-            border-radius: 4px
-            transition: all .3s
-            appearance: none
-            outline: none
-            &:hover
-                border: 1px solid #108ee9   
-        .btn .el-form-item__content
+            font-size: 16px 
+        .btn
             display: flex
             justify-content: space-between
-            padding: 0 5px
-            button 
-                width: 103px
-                height: 32px
-                line-height: 32px
-                border-radius: 4px
-                text-align: center
-                font-size: 14px
-                outline: none
-                cursor: pointer
-            .active
-                color: #fff
-                background: #108ee9
-        input[type=text]:focus
-            display: inline-block
-        input[type=text]:focus .normal
-            display: none
+            button
+                width: 104px
+
+        .el-input--prefix .el-input__inner
+            padding-left: 10px
 </style>
