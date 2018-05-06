@@ -24,9 +24,9 @@
                 <Col :span="4"><Input type="number" v-model.number="item.weight"  placeholder="请输入权重" style="width:110px"></Input></Col>
                 <Col :span="4" style="display: flex;justify-content: center;">
                   <!-- <Input  placeholder="请输入内容" style="width:120px"></Input> -->
-                  <!-- <Avatar :url="item.icon" @success="item.icon = $event" :width="'40'" :height="'40'"/> -->
+                  <Avaters :url="item.icon" @success="item.icon = $event" :width="'40'" :height="'40'"/>
                 </Col>
-                <Col :span="4"><div>{{item.createTime}}</div></Col>
+                <Col :span="4"><div>{{detailTimeFilter(0,0,item.createTime)}}</div></Col>
                 <Col :span="4">
                   <div>
                     <Button type="danger" plain size="middle" @click.stop.native="saveDad(item)">保存</Button>
@@ -40,9 +40,9 @@
                 <Col :span="4"><Input v-model.trim="ite.name"  placeholder="请输入子分类名称" style="width:150px"></Input></Col>
                 <Col :span="4"><Input type="number" v-model.number="ite.weight" placeholder="请输入权重" style="width:110px"></Input></Col>
                 <Col :span="4" style="display: flex;justify-content: center;">
-                  <!-- <Avatar :url="ite.icon" @success="ite.icon = $event" :width="'40'" :height="'40'"/> -->
+                  <Avaters :url="ite.icon" @success="ite.icon = $event" :width="'40'" :height="'40'"/>
                 </Col>
-                <Col :span="4"><div>{{ite.createTime}}</div></Col>
+                <Col :span="4"><div>{{detailTimeFilter(0,0,ite.createTime)}}</div></Col>
                 <Col :span="4">
                   <div>
                     <Button type="danger" plain size="middle"  @click="saveSon(ite,item.id)">保存</Button>
@@ -62,15 +62,16 @@
 </template>
 
 <script>
-import { Button,Row,Collapse,CollapseItem,Input} from 'element-ui'
-// import Avatar from "../../components/Avaters.vue"
-// import { detailTimeFilter} from "../../util/filter"
+import { Button,Row,Col,Collapse,CollapseItem,Input} from 'element-ui'
+import Avaters from "../../components/Avaters.vue"
+import { detailTimeFilter} from "../../util/filter"
 export default {
     name: 'classify',
     components: {
-      // Avaters,
+      Avaters,
       Button,
       Row,
+      Col,
       Collapse,
       CollapseItem,
       Input
@@ -78,7 +79,7 @@ export default {
     data () {
 		return {
        data: [],
-        options:{},
+        options:[],
         aaa:0,
         showData: [
           {
@@ -96,107 +97,115 @@ export default {
     },
 
     methods: {
-    //  detailTimeFilter,
+     detailTimeFilter,
       handleChange(val) {
         console.log(val)
       },
       init(){
-      //   getgoodsCategory().then((data)=>{ //获取商品分类
-      //     this.options=data
+        // getgoodsCategory().then((data)=>{ //获取商品分类
+          this.options=[
+        {
+          parentId:0,
+          name:'xxx',
+          icon:'',
+          weight:'1',
+          list:[]
+          }
+          ]
       //     console.log(data,"商品分类")
       //   })
       },
       saveSon(res,resID){
-        var newAddDad={}
-        if(res.id){
-          console.log("修改")
-          newAddDad.parentId=resID
-          newAddDad.name = res.name
-          newAddDad.icon = res.icon
-          newAddDad.weight=res.weight
-          updategoodsCategory(res.id,newAddDad).then((data)=>{ //新增商品分类
-            if(data.code==812||data.code==813){
-              return;
-            }
-            this.init()
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            });
-            newAddDad={}
-            // console.log("zzzz",newAddDad)
-          })
-        }else{
-          console.log("新增")
-          newAddDad.parentId=resID
-          newAddDad.name = res.name
-          newAddDad.icon = res.icon
-          newAddDad.weight=res.weight
-          // console.log("333333",newAddDad)
-          addgoodsCategory(newAddDad).then((data)=>{ //新增商品分类
-            if(data.code==812||data.code==813||data.code==814){
-              return;
-            }
-            this.init()
-            this.$message({
-              type: 'success',
-              message: '新建成功!'
-            });
-            newAddDad={}
-            // console.log("zzzz",newAddDad)
-          })
-        }
+        // var newAddDad={}
+        // if(res.id){
+        //   console.log("修改")
+        //   newAddDad.parentId=resID
+        //   newAddDad.name = res.name
+        //   newAddDad.icon = res.icon
+        //   newAddDad.weight=res.weight
+        //   updategoodsCategory(res.id,newAddDad).then((data)=>{ //新增商品分类
+        //     if(data.code==812||data.code==813){
+        //       return;
+        //     }
+        //     this.init()
+        //     this.$message({
+        //       type: 'success',
+        //       message: '修改成功!'
+        //     });
+        //     newAddDad={}
+        //     // console.log("zzzz",newAddDad)
+        //   })
+        // }else{
+        //   console.log("新增")
+        //   newAddDad.parentId=resID
+        //   newAddDad.name = res.name
+        //   newAddDad.icon = res.icon
+        //   newAddDad.weight=res.weight
+        //   // console.log("333333",newAddDad)
+        //   addgoodsCategory(newAddDad).then((data)=>{ //新增商品分类
+        //     if(data.code==812||data.code==813||data.code==814){
+        //       return;
+        //     }
+        //     this.init()
+        //     this.$message({
+        //       type: 'success',
+        //       message: '新建成功!'
+        //     });
+        //     newAddDad={}
+        //     // console.log("zzzz",newAddDad)
+        //   })
+        // }
       },
       saveDad(res){
-        var newAddDad={}
-        // stop
-        if(res.id){
-          console.log("修改")
-          this.options.forEach((element,key) => {
-            if(element.id==res.id){
-              newAddDad.parentId=0
-              newAddDad.name = this.options[key].name
-              newAddDad.icon = this.options[key].icon
-              newAddDad.weight=this.options[key].weight
-            }
-          })
-          updategoodsCategory(res.id,newAddDad).then((data)=>{ 
-          if(data.code==812||data.code==813){
-              return;
-            }
-            this.init()
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            });
-            newAddDad={}
-            // console.log("zzzz",newAddDad)
-          })
-        }else{
+        // var newAddDad={}
+        // // stop
+        // if(res.id){
+        //   console.log("修改")
+        //   this.options.forEach((element,key) => {
+        //     if(element.id==res.id){
+        //       newAddDad.parentId=0
+        //       newAddDad.name = this.options[key].name
+        //       newAddDad.icon = this.options[key].icon
+        //       newAddDad.weight=this.options[key].weight
+        //     }
+        //   })
+        //   updategoodsCategory(res.id,newAddDad).then((data)=>{ 
+        //   if(data.code==812||data.code==813){
+        //       return;
+        //     }
+        //     this.init()
+        //     this.$message({
+        //       type: 'success',
+        //       message: '修改成功!'
+        //     });
+        //     newAddDad={}
+        //     // console.log("zzzz",newAddDad)
+        //   })
+        // }else{
 
-          this.options.forEach((element,key) => {
-            if(!element.id){
-              newAddDad.parentId=0
-              newAddDad.name = this.options[key].name
-              newAddDad.icon = this.options[key].icon
-              newAddDad.weight=this.options[key].weight
-            }
-          })
-          // console.log("333333",newAddDad)
-          addgoodsCategory(newAddDad).then((data)=>{ //新增商品分类
-            if(data.code==812||data.code==813||data.code==814){
-              return;
-            }
-            this.init()
-            this.$message({
-              type: 'success',
-              message: '新建成功!'
-            });
-            newAddDad={}
-            // console.log("zzzz",newAddDad)
-          })
-          console.log("新增")
-        }
+        //   this.options.forEach((element,key) => {
+        //     if(!element.id){
+        //       newAddDad.parentId=0
+        //       newAddDad.name = this.options[key].name
+        //       newAddDad.icon = this.options[key].icon
+        //       newAddDad.weight=this.options[key].weight
+        //     }
+        //   })
+        //   // console.log("333333",newAddDad)
+        //   addgoodsCategory(newAddDad).then((data)=>{ //新增商品分类
+        //     if(data.code==812||data.code==813||data.code==814){
+        //       return;
+        //     }
+        //     this.init()
+        //     this.$message({
+        //       type: 'success',
+        //       message: '新建成功!'
+        //     });
+        //     newAddDad={}
+        //     // console.log("zzzz",newAddDad)
+        //   })
+        //   console.log("新增")
+        // }
       },
       addDad(){
         let newDad1={
@@ -226,7 +235,7 @@ export default {
         })
       },
       delSon(res){
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        vm.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
