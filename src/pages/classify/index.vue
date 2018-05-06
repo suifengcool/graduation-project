@@ -7,11 +7,11 @@
     <div id="all">
       <div class="title">
         <Row type="flex" align="middle" justify="center">
-          <Col :span="4"><div class="titleInfo">分类名称</div></Col>
-          <Col :span="4"><div class="titleInfo">分类权重</div></Col>
-          <Col :span="4"><div class="titleInfo">分类图标</div></Col>
-          <Col :span="4"><div class="titleInfo">创建时间</div></Col>
-          <Col :span="4"><div class="titleInfo">操作</div></Col>
+          <Col :span="5"><div class="titleInfo">分类名称</div></Col>
+          <Col :span="5"><div class="titleInfo">分类权重</div></Col>
+          <!-- <Col :span="4"><div class="titleInfo">分类图标</div></Col> -->
+          <Col :span="5"><div class="titleInfo">创建时间</div></Col>
+          <Col :span="5"><div class="titleInfo">操作</div></Col>
         </Row>
       </div>
       <!-- 主体部分 -->
@@ -20,14 +20,13 @@
           <CollapseItem v-for="(item,index) in options" :key="index">
             <template slot="title">
               <Row type="flex" align="middle" justify="center">
-                <Col :span="4"><Input v-model.trim="item.name"  placeholder="请输入主分类名称" style="width:200px"></Input></Col>
-                <Col :span="4"><Input type="number" v-model.number="item.weight"  placeholder="请输入权重" style="width:110px"></Input></Col>
-                <Col :span="4" style="display: flex;justify-content: center;">
-                  <!-- <Input  placeholder="请输入内容" style="width:120px"></Input> -->
+                <Col :span="5"><Input v-model.trim="item.name"  placeholder="请输入主分类名称" style="width:200px"></Input></Col>
+                <Col :span="5"><Input type="number" v-model.number="item.weight"  placeholder="请输入权重" style="width:110px"></Input></Col>
+                <!-- <Col :span="5" style="display: flex;justify-content: center;">
                   <Avaters :url="item.icon" @success="item.icon = $event" :width="'40'" :height="'40'"/>
-                </Col>
-                <Col :span="4"><div>{{detailTimeFilter(0,0,item.createTime)}}</div></Col>
-                <Col :span="4">
+                </Col> -->
+                <Col :span="5"><div>{{detailTimeFilter(0,0,item.createTime)}}</div></Col>
+                <Col :span="5">
                   <div>
                     <Button type="danger" plain size="middle" @click.stop.native="saveDad(item)">保存</Button>
                     <Button type="danger" plain size="middle" @click.stop.native="delDad(item)">删除</Button>
@@ -37,13 +36,13 @@
             </template>
             <div v-for="(ite,index) in item.list" class="sonClassify" :key="index">
               <Row type="flex" align="middle" justify="center">
-                <Col :span="4"><Input v-model.trim="ite.name"  placeholder="请输入子分类名称" style="width:150px"></Input></Col>
-                <Col :span="4"><Input type="number" v-model.number="ite.weight" placeholder="请输入权重" style="width:110px"></Input></Col>
-                <Col :span="4" style="display: flex;justify-content: center;">
+                <Col :span="5"><Input v-model.trim="ite.name"  placeholder="请输入子分类名称" style="width:150px"></Input></Col>
+                <Col :span="5"><Input type="number" v-model.number="ite.weight" placeholder="请输入权重" style="width:110px"></Input></Col>
+                <!-- <Col :span="5" style="display: flex;justify-content: center;">
                   <Avaters :url="ite.icon" @success="ite.icon = $event" :width="'40'" :height="'40'"/>
-                </Col>
-                <Col :span="4"><div>{{detailTimeFilter(0,0,ite.createTime)}}</div></Col>
-                <Col :span="4">
+                </Col> -->
+                <Col :span="5"><div>{{detailTimeFilter(0,0,ite.createTime)}}</div></Col>
+                <Col :span="5">
                   <div>
                     <Button type="danger" plain size="middle"  @click="saveSon(ite,item.id)">保存</Button>
                     <Button type="danger" plain size="middle" @click="delSon(ite)">删除</Button>
@@ -62,19 +61,20 @@
 </template>
 
 <script>
-import { Button,Row,Col,Collapse,CollapseItem,Input} from 'element-ui'
-import Avaters from "../../components/Avaters.vue"
+import { Button,Row,Col,Collapse,CollapseItem,Input,MessageBox} from 'element-ui'
+// import Avaters from "../../components/Avaters.vue"
 import { detailTimeFilter} from "../../util/filter"
 export default {
     name: 'classify',
     components: {
-      Avaters,
+      // Avaters,
       Button,
       Row,
       Col,
       Collapse,
       CollapseItem,
-      Input
+      Input,
+      MessageBox
     },
     data () {
 		return {
@@ -211,7 +211,6 @@ export default {
         let newDad1={
           parentId:0,
           name:'',
-          icon:'',
           weight:'',
           list:[]
         }
@@ -224,7 +223,6 @@ export default {
         let newSon1={
           parentId:res.id,
           name:'',
-          icon:'',
           weight:''
         }
         this.options.forEach((element,key) => {
@@ -235,49 +233,49 @@ export default {
         })
       },
       delSon(res){
-        vm.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
           center: true
         }).then(() => {
-          delgoodsCategory(res.id).then((data)=>{ //获取商品分类
-           if(data.code==815||data.code==811){
-              return;
-            }
-            this.init()
-            this.$message({
+          // delgoodsCategory(res.id).then((data)=>{ //获取商品分类
+          //  if(data.code==815||data.code==811){
+          //     return;
+          //   }
+          //   this.init()
+             vm.$message({
               type: 'success',
               message: '删除成功!'
             });
-          });
+          // });
         }).catch(() => {
-          this.$message({
+          vm.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
       },
       delDad(res){
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+       MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
           center: true
         }).then(() => {
-          delgoodsCategory(res.id).then((data)=>{ 
-            if(data.code==815||data.code==811){
-              return;
-            }
-            this.init()
-            this.$message({
+          // delgoodsCategory(res.id).then((data)=>{ 
+          //   if(data.code==815||data.code==811){
+          //     return;
+          //   }
+          //   this.init()
+            vm.$message({
               type: 'success',
               message: '删除成功!'
             });
-          })
+          // })
 
         }).catch(() => {
-          this.$message({
+          vm.$message({
             type: 'info',
             message: '已取消删除'
           });

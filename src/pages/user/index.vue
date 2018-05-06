@@ -31,7 +31,7 @@
                </div>
             </Dialog >
             <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true">
-               <Form :model="addOption" label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
+               <Form :model="addOption" status-icon label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
                  <FormItem label="账号" prop="acount">
                     <Input v-model="addOption.acount"  placeholder="请输入账号"/>
                  </FormItem>
@@ -167,12 +167,5 @@ export default {
 </style>
 
 <style lang='less' scoped>
-   .user{
-     .content-title{
-        .add{         
-           position: relative;
-           right:-75%; 
-        } 
-     }
-   } 
+
 </style>

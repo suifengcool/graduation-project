@@ -64,10 +64,14 @@ html {
   background: #fff;
   margin-bottom: 20px;
   padding-left: 26px;
+  padding-right: 25px;
   border-left: 3px solid #51c5ff;
   font-size: 22px;
   margin-bottom: 30px;
   color:#495869;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
 }
 html,body{
   height: 100%;
@@ -89,4 +93,11 @@ html,body{
   66.67% { background-position: -1690px -10px; }
   83.34% { background-position: -2110px -10px; }
   100% { background-position: -2530px -10px; }
+}
+
+.table_content{
+ text-align: center ;
+}
+.table_content thead th{
+ text-align: center;
 }
