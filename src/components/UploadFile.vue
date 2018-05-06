@@ -18,7 +18,7 @@
         <h3>点击上传视频<br/>(不能超过800MB)</h3>
       </div>
       <div v-if="showLoading" class="overspread">
-        <img src="../../static/loading.gif" alt="">
+        <img src="/static/loading.gif" alt="">
         <p>视频渲染中...</p>
       </div>
     </Upload>
