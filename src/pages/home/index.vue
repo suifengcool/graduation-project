@@ -217,6 +217,10 @@ export default {
 </script>
 <style lang='less' scoped>
   .home-index{
+    >.layout{
+      margin: 0 auto;
+      max-width: 1366px;
+    }
     header {
     height: 160px;
     text-align: center; // line-height: 130px;
