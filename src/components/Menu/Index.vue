@@ -107,7 +107,7 @@ export default {
   methods: {}
 }
 </script>
-<style lang="scss" scope>
+<style lang="less" scope>
 /* afsd*/
 .StartHere {
   height: 100vh;
