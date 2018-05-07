@@ -3,35 +3,29 @@
       <div class="content-title">视频列表<Button type="primary"  round @click="newput"><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
       <div class="table_content">
         <Table :data="data.list">
-          <TableColumn prop="id" label="id"/>
           <TableColumn prop="name" label="视频名称"/>
           <TableColumn prop="videoUrl" label="视频地址" />
-          <TableColumn prop="userId" label="管理员id"/>
-          <TableColumn prop="classifyId" label="分类id"/>
           <TableColumn prop="createTime" label="创建时间"/>
           <TableColumn prop="updateTime" label="创建时间"/>                
           <TableColumn label="操作" width="240" fixed="right">
             <template slot-scope="scope">
               <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
-              <Button type="danger" plain size="small" @click="del(scope.row.id)" >删除</Button>
+              <Button type="danger" plain size="small" @click="del(scope.row.id)">删除</Button>
             </template>
           </TableColumn>
         </Table>
       </div>
         <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone">
-          <Form :model="formOption" label-position="right" label-width="80px" :ref="ruleForm">
+          <Form :model="formOption" label-position="right" label-width="80px" ref="ruleForm">
             <FormItem label="视频名称" >
               <Input v-model="formOption.name"/>
             </FormItem>
             <FormItem label="分类">
-              <Select v-model="value" placeholder="请选择">
-                <Option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </Option>
-              </Select>
+              <Cascader
+                      :options="options2"
+                      @active-item-change="handleItemChange"
+                      :props="props">
+              </Cascader>
             </FormItem>
             <FormItem label="上传视频">
               <Col :span="24">
@@ -42,7 +36,7 @@
             </FormItem>                
           </Form> 
           <div slot="footer" class="dialog-footer">
-          <Button @click="admin.show = false">取消</Button>
+          <Button @click="dialogFormVisible = false">取消</Button>
           <Button type="primary" @click="save">确定</Button>
           </div>
         </Dialog >
@@ -77,6 +71,7 @@ import {
   FormItem,
   Select,
   Option,
+  Cascader,
   MessageBox 
   } from 'element-ui';
 import MyPagination from '../../components/MyPagination.vue'
@@ -102,12 +97,18 @@ export default {
       Select,
       Option,
       UploadFile,
+      Cascader,
       MessageBox 
     },
     data () {
 		return {
       value5: "",
       title: '新建',
+      options2: [],
+      props: {
+        value: 'label',
+        children: 'cities'
+        },
       seek:{
         page: 1,
         pageSize: 8,
@@ -124,22 +125,6 @@ export default {
         videoUrl: '' 
       },
       dialogFormVisible: false,
-      options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
       value: '',
       option:{
         list:[
@@ -154,27 +139,87 @@ export default {
 
     created () {
         vm.config.title("视频管理");
+              vm.fetch.get('/classify/list').then(result=>{
+            // result
+            console.log("数据",result);
+            result.list.forEach(element => {
+                if (element.type == 1) {
+                    var obj = {
+                        ids: element.parentId,
+                        label: element.name,
+                        // cities: []
+                    }
+                }else{
+                    var obj = {
+                        ids: element.parentId,
+                        label: element.name,
+                        cities: []
+                    }
+                }
+                
+                this.options2.push(obj)
+            });
+            console.log("结果",this.options2);
+        })
     },
 
     methods: {
       edit() {
         this.dialogFormVisible = true 
         this.title = '编辑'
+        },
+      handleItemChange(val) {
+           console.log('active item:', val);
+            this.options2.forEach((item,index)=>{
+                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
+                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                        // result
+                        console.log("数据",result);
+                        result.forEach(element => {
+                            var obj = {
+                                id: element.id,
+                                label: element.name,
+                            }
+                            this.options2[index].cities.push(obj)
+                        });
+                        console.log("结果",this.options2);
+                    })
+                } 
+            })
 
       },
       // 新建
       newput(){
         this.dialogFormVisible = true 
         this.title = '新建'
+        console.log(this.title)
       },
      save() {
           this.dialogFormVisible = false 
           console.log(this.title)
+          console.log(window.localStorage.getItem('userInfo'))
+          console.log(this.formOption.videoUrl )
+          //新建
           if(this.title == '新建')
           {
+            this.$refs.ruleForm.validate((val)=>{
+              if(val){
+                vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:10,classifyId:1}).then((val)={
 
+                })
+              }
+            })
           }
-          
+          //编辑
+          else{
+            this.$refs.ruleForm.validate((val)=>{
+              if(val){
+                vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:'2018.7.7',updateTime:'2018.4.10',userId:10,classifyId:1}).then((val)={
+
+                })
+              }
+            })
+          }
      },
      getData(){
         vm.fetch.get(`/video/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
@@ -184,10 +229,8 @@ export default {
      },
      successIdCardBack2(val) {
        this.formOption.videoUrl = val
+       console.log('val',this.formOption.videoUrl )
      },
-    successIdCardBack2() {
-
-    },
     del(id) {
           MessageBox.confirm(`你删除?`, 'warning', '取消确认')
     .then(() =>
