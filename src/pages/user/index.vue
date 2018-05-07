@@ -13,11 +13,12 @@
             <TableColumn prop="createTime" label="创建时间"/>           
             <TableColumn label="操作" width="240" fixed="right">
               <template slot-scope="scope">
-                <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
+                <Button type="primary" plain size="small" @click="edit(scope.row.id)">编辑</Button>
                 <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
               </template>
            </TableColumn>
          </Table>
+         <MyPagination :page="option.page" :pageSize='option.pageSize' :total="option.total" :pageSizes=[10]></MyPagination>
         </div>
         <div class="log">
               <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true" class="user_log">
@@ -60,6 +61,7 @@
 
 <script>
 import Avaters from "../../components/Avaters.vue"
+import MyPagination from "../../components/MyPagination.vue"
 import { Button,Table,TableColumn,Input,Dialog,Form,FormItem} from 'element-ui';
 export default {
     name: 'user',
@@ -71,7 +73,8 @@ export default {
       Dialog,
       Form,
       FormItem,
-      Avaters
+      Avaters,
+      MyPagination
     },
     data () {
 		return {
@@ -91,7 +94,7 @@ export default {
       },
       FormRules:{
         pwd:[{ 
-           required: true,
+          required: true,
           validator:  (rule, value, callback)=>{
            if(!value){
               callback(new Error('请输入密码'));
@@ -129,6 +132,9 @@ export default {
           }]
       },
       option:{
+        page:1,
+        pageSize:10,
+        total:null,
         list:[
           {acount:15827605588,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:1},
           {acount:15827605599,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:2},
@@ -157,7 +163,9 @@ export default {
      },
      add(){
        this.addNumber = true;
-        
+       vm.fetch.post('http://192.168.1.247:8089/users/add',this.addOption)
+       .then(data=>{console.log("success")})
+       .catch(error=>{console.log(error)})
      },
      addAcount(){
        this.$refs.addOption.validate((valid)=>{
