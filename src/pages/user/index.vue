@@ -13,7 +13,7 @@
             <TableColumn prop="createTime" label="创建时间"/>           
             <TableColumn label="操作" width="240" fixed="right">
               <template slot-scope="scope">
-                <Button type="primary" plain size="small" @click="edit(scope.row.id)">编辑</Button>
+                <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
                 <Button type="danger" plain size="small" @click="del(scope.row)">删除</Button>
               </template>
            </TableColumn>
@@ -27,8 +27,8 @@
                  <FormItem label="账号">
                     <Input v-model="formOption.userName" disabled/>
                  </FormItem>
-                 <FormItem label="新密码">
-                    <Input v-model="formOption.password"/>
+                 <FormItem label="新密码" prop="password">
+                    <Input v-model="formOption.password" type="password"/>
                  </FormItem>                
               </Form> 
                <div slot="footer" class="dialog-footer">
@@ -52,10 +52,10 @@
                     </Select>
                  </FormItem> -->
                  <FormItem label="密码" prop="password">
-                    <Input v-model="addOption.password"  placeholder="请输入密码"/>
+                    <Input v-model="addOption.password" type="password" placeholder="请输入密码"/>
                  </FormItem>
                  <FormItem label="确认密码" prop="surePwd">
-                    <Input v-model="addOption.surePwd" placeholder="请在次输入密码"/>
+                    <Input v-model="addOption.surePwd" type="password" placeholder="请在次输入密码"/>
                  </FormItem>                
               </Form> 
                <div slot="footer" class="dialog-footer">
@@ -116,9 +116,7 @@ export default {
            }
            callback() 
         },
-        trigger: 'blur',
-       
-        }],
+        trigger: 'blur', }],
         surePwd:[ {
           required: true,
            validator: (rule, value, callback)=>{
@@ -158,7 +156,7 @@ export default {
 
     methods: {
       getUserList(page={}){ //获取列表
-        vm.fetch.post(`users/list?page=${page.page}&pageSize=${page.pageSize}`)
+        vm.fetch.get(`users/list?page=${page.page}&pageSize=${page.pageSize}`)
         .then(data=>{
           console.log(data)
              this.option.page= data.pageNum
@@ -183,23 +181,32 @@ export default {
           center: true
           })
           .then(()=>{
-                var id = option.id
-                vm.fetch.delete(`/users/delete/${id}`) 
-                .then(data=>{
-                    this.$message({
-                        message: '删除成功',
-                        type: 'error'
-                      });
-                }) 
+              var id = option.id
+              vm.fetch.delete(`/users/delete/${id}`) 
+              .then(data=>{
+                this.getUserList()
+                this.$message({
+                  message: '删除成功',
+                  type: 'success'
+                });
+              }) 
           })    
      },
 
      save(){ //编辑
        var opt = {}
-      //  opt.id = this.formOption.id
+       opt.id = this.formOption.id
        opt.password = this.formOption.password
        vm.fetch.put('/users/update',opt)
-       .then(data=>{console.log("编辑成功")})
+       .then(data=>{
+         if(result.resultCode == 200){
+            this.$message({
+                message: '编辑成功',
+                type: 'success'
+            });
+              this.formOption={}
+            }
+         })
        .catch(error=>{console.log("error")})
      },
      add(){
@@ -220,6 +227,7 @@ export default {
                     type: 'success'
                   });
                  this.addNumber = false; 
+                 this.addOption = {}
               }    
             })
             .catch(error=>{console.log(error)})
