@@ -1,24 +1,27 @@
 <template>
     <div class='videomanage content'>
-      <div class="content-title">视频列表<Button type="primary"  round @click=""><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
+      <div class="content-title">视频列表<Button type="primary"  round @click="newput"><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
       <div class="table_content">
-        <Table :data="option.list">
-          <TableColumn prop="acount" label="视频名称"/>
-          <TableColumn prop="url" label="视频地址" />
-          <TableColumn prop="password" label="分类"/>
-          <TableColumn prop="createTime" label="创建时间"/>           
+        <Table :data="data.list">
+          <TableColumn prop="id" label="id"/>
+          <TableColumn prop="name" label="视频名称"/>
+          <TableColumn prop="videoUrl" label="视频地址" />
+          <TableColumn prop="userId" label="管理员id"/>
+          <TableColumn prop="classifyId" label="分类id"/>
+          <TableColumn prop="createTime" label="创建时间"/>
+          <TableColumn prop="updateTime" label="创建时间"/>                
           <TableColumn label="操作" width="240" fixed="right">
             <template slot-scope="scope">
               <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
-              <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
+              <Button type="danger" plain size="small" @click="del(scope.row.id)" >删除</Button>
             </template>
           </TableColumn>
         </Table>
       </div>
         <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone">
-          <Form :model="formOption" label-position="right" label-width="80px">
+          <Form :model="formOption" label-position="right" label-width="80px" :ref="ruleForm">
             <FormItem label="视频名称" >
-              <Input v-model="formOption.acount" />
+              <Input v-model="formOption.name"/>
             </FormItem>
             <FormItem label="分类">
               <Select v-model="value" placeholder="请选择">
@@ -43,7 +46,16 @@
           <Button type="primary" @click="save">确定</Button>
           </div>
         </Dialog >
-      <!-- <MyPagination :page="data.page" :pageSize="data.pageSize" :pageSizes="[8]" :total="data.total" :method="findList"/> -->
+
+        <!-- 分页 -->
+        <div class="pre_search">
+            <MyPagination 
+                :page="data.pageNum" 
+                :pageSize="data.pageSize" 
+                :pageSizes="[10]" 
+                :total="data.total" 
+                :method='getData' />
+        </div>
     </div>
 </template>
 
@@ -95,12 +107,22 @@ export default {
     data () {
 		return {
       value5: "",
+      title: '新建',
       seek:{
         page: 1,
         pageSize: 8,
         topicsName: null,//搜索
       },
-      formOption: {},
+      data:{
+        pageNum:1,
+        pageSize:10,
+        total:null,
+        list:[],  
+      },
+      formOption: {
+        acount: '',
+        videoUrl: '' 
+      },
       dialogFormVisible: false,
       options: [{
           value: '选项1',
@@ -137,53 +159,52 @@ export default {
     methods: {
       edit() {
         this.dialogFormVisible = true 
-      },
-      schedule() {
+        this.title = '编辑'
 
       },
-      search() {
-
+      // 新建
+      newput(){
+        this.dialogFormVisible = true 
+        this.title = '新建'
       },
-     reset() {
-
-     },
      save() {
+          this.dialogFormVisible = false 
+          console.log(this.title)
+          if(this.title == '新建')
+          {
 
+          }
+          
      },
-     successIdCardBack2() {
-
+     getData(){
+        vm.fetch.get(`/video/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
+         console.log(data)
+         this.data = {data}
+      })
      },
-    success2() {
-
-    },
+     successIdCardBack2(val) {
+       this.formOption.videoUrl = val
+     },
     successIdCardBack2() {
 
     },
-    del() {
-       MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          // delgoodsCategory(res.id).then((data)=>{ //获取商品分类
-          //  if(data.code==815||data.code==811){
-          //     return;
-          //   }
-          //   this.init()
-             vm.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          // });
-        }).catch(() => {
-          vm.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
-    }
-	}
+    del(id) {
+          MessageBox.confirm(`你删除?`, 'warning', '取消确认')
+    .then(() =>
+        vm.fetch.delete(`/video/delete${id}`)
+        .then(res=>{
+            if(res && res.resultCode === 200){
+                vm.$message({
+                    type: 'success',
+                    message: '删除成功',
+                    duration: 1000
+                })
+            }
+        })
+        .catch(({ msg }) => error(msg || '取消失败！请稍后重试...'))
+    )
+  }
+  }
 }
 </script>
 <style lang='sass' scoped>
