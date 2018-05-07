@@ -14,7 +14,7 @@
             <TableColumn label="操作" width="240" fixed="right">
               <template slot-scope="scope">
                 <Button type="primary" plain size="small" @click="edit(scope.row.id)">编辑</Button>
-                <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
+                <Button type="danger" plain size="small" @click="del(scope.row)">删除</Button>
               </template>
            </TableColumn>
          </Table>
@@ -39,11 +39,20 @@
             <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true" class="user_log">
                <Form :model="addOption" status-icon label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
                   <Avaters :defaultPic="addOption.userImg || 'http://www.qqzhi.com/uploadpic/2014-10-08/210702213.jpg'"  method="success1" @success1="getImg1" width='100' height="100"></Avaters>
-                 <FormItem label="账号" prop="acount">
-                    <Input v-model="addOption.acount"  placeholder="请输入账号"/>
+                 <FormItem label="账号" prop="userName">
+                    <Input v-model="addOption.userName"  placeholder="请输入账号"/>
                  </FormItem>
-                 <FormItem label="密码" prop="pwd">
-                    <Input v-model="addOption.pwd"  placeholder="请输入密码"/>
+                  <FormItem label="角色名" prop="roleName">
+                    <Select v-model="addOption.roleName">
+                      <Option  v-for="(item,index) in selectOption"
+                        :key="index"
+                        :label="item.label"
+                        :value="item.value">
+                      </Option>
+                    </Select>
+                 </FormItem>
+                 <FormItem label="密码" prop="password">
+                    <Input v-model="addOption.password"  placeholder="请输入密码"/>
                  </FormItem>
                  <FormItem label="确认密码" prop="surePwd">
                     <Input v-model="addOption.surePwd" placeholder="请在次输入密码"/>
@@ -62,7 +71,7 @@
 <script>
 import Avaters from "../../components/Avaters.vue"
 import MyPagination from "../../components/MyPagination.vue"
-import { Button,Table,TableColumn,Input,Dialog,Form,FormItem} from 'element-ui';
+import { Button,Table,TableColumn,Input,Dialog,Form,FormItem,Select,Option} from 'element-ui';
 export default {
     name: 'user',
     components: {
@@ -74,12 +83,15 @@ export default {
       Form,
       FormItem,
       Avaters,
-      MyPagination
+      MyPagination,
+      Select,
+      Option
     },
     data () {
 		return {
       dialogFormVisible:false,
       addNumber:false,
+      selectOption:[{ value:1, label: "超级管理员"}, {value:2, label: "管理员"}],
       formOption:{
         id:null,
         acount:null,
@@ -87,13 +99,14 @@ export default {
         password:null,
       },
       addOption:{
-        acount:null,
-        pwd:null,
-        surePwd:null,
-        userImg:null,
+        userName:null,
+        password:null,
+        roleName:null,
+        
       },
       FormRules:{
-        pwd:[{ 
+        roleName:[{required: true,trigger: 'blur',message:'请选择角色'},],
+        password:[{ 
           required: true,
           validator:  (rule, value, callback)=>{
            if(!value){
@@ -107,11 +120,11 @@ export default {
        
         }],
         surePwd:[ {
-            required: true,
+          required: true,
            validator: (rule, value, callback)=>{
             if (!value) {
               callback(new Error('请再次输入密码'));
-            } else if (value !== this.addOption.pwd) {
+            } else if (value !== this.addOption.password) {
               callback(new Error('两次输入密码不一致!'));
             } else {
               callback();
@@ -119,7 +132,7 @@ export default {
         } , 
         trigger: 'blur' ,      
          }],
-        acount:[{
+        userName:[{
           required: true,
           validator:(rule, value, callback)=>{
             if(!value){
@@ -162,25 +175,30 @@ export default {
        console.log("formOption",this.formOption.acount,this.formOption.password,this.formOption.id) 
      },
      add(){
-       this.addNumber = true;
-       vm.fetch.post('http://192.168.1.247:8089/users/add',this.addOption)
-       .then(data=>{console.log("success")})
-       .catch(error=>{console.log(error)})
+       this.addNumber = true;      
      },
      addAcount(){
        this.$refs.addOption.validate((valid)=>{
           if(valid){
            alert("can add")
+           var params = {}
+            params.userName=this.addOption.userName,
+            params.password=this.addOption.password,
+            params.roleName=this.addOption.roleName.toString(),
+            params.createTime=new Date(),  
+            vm.fetch.post('/users/add',params)
+            .then(data=>{console.log("success")})
+            .catch(error=>{console.log(error)})
           }else{
             return false
           }  
         })
      },
      getImg(url){
-        this.formOption.userImg = url
+        // this.formOption.userImg = url
      },
      getImg1(url){
-       this.addOption.userImg = url
+      //  this.addOption.userImg = url
      },
      AddClear(){
        this.addOption = {};
