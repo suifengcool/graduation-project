@@ -16,7 +16,7 @@
          </Table>
         </div>
         <div class="log">
-              <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true">
+              <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true" class="user_log">
                <Form :model="formOption" label-position="right" label-width="80px">
                  <FormItem label="账号" >
                     <Input v-model="formOption.acount" disabled/>
@@ -30,7 +30,7 @@
                 <Button type="primary" @click="save">确定修改</Button>
                </div>
             </Dialog >
-            <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true">
+            <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true" class="user_log">
                <Form :model="addOption" status-icon label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
                  <FormItem label="账号" prop="acount">
                     <Input v-model="addOption.acount"  placeholder="请输入账号"/>
@@ -148,6 +148,11 @@ export default {
 }
 </script>
 <style lang="less">
+  .user_log{
+    .el-dialog{
+      width: 450px;
+    }
+  }
   .user{
       .table_content{
        text-align: center ;
