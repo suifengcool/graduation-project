@@ -99,13 +99,7 @@ export default {
                 classify: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
                 content: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
             },
-            options2: [{
-                label: '江苏',
-                cities: []
-            }, {
-                label: '浙江',
-                cities: []
-            }],
+            options2: [],
             props: {
                 value: 'label',
                 children: 'cities'
@@ -120,6 +114,28 @@ export default {
     },
 
     created () {
+        vm.fetch.get('/classify/list').then(result=>{
+            // result
+            console.log("数据",result);
+            result.list.forEach(element => {
+                if (element.type == 1) {
+                    var obj = {
+                        ids: element.parentId,
+                        label: element.name,
+                        // cities: []
+                    }
+                }else{
+                    var obj = {
+                        ids: element.parentId,
+                        label: element.name,
+                        cities: []
+                    }
+                }
+                
+                this.options2.push(obj)
+            });
+            console.log("结果",this.options2);
+        })
     },
 
     watch:{
@@ -156,21 +172,45 @@ export default {
             if(this.modalType){
 
             }
+            MessageBox.confirm(`你删除?`, 'warning', '取消确认')
+            .then(() =>
+                vm.fetch.put(`/articles/update`,{
+                    title: formOption.title,//标题
+                    classifyId: formOption.title,//文章分类id
+                    content: formOption.content,//文章内容
+                })
+                .then(res=>{
+                    if(res && res.resultCode === 200){
+                        vm.$message({
+                            type: 'success',
+                            message: '删除成功',
+                            duration: 1000
+                        })
+                    }
+                })
+                .catch(({ msg }) => error(msg || '取消失败！请稍后重试...'))
+            )
         },
 
         handleItemChange(val) {
             console.log('active item:', val);
-            setTimeout(_ => {
-              if (val.indexOf('江苏') > -1 && !this.options2[0].cities.length) {
-                this.options2[0].cities = [{
-                  label: '南京'
-                }];
-              } else if (val.indexOf('浙江') > -1 && !this.options2[1].cities.length) {
-                this.options2[1].cities = [{
-                  label: '杭州'
-                }];
-              }
-            }, 300);
+            this.options2.forEach((item,index)=>{
+                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
+                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                        // result
+                        console.log("数据",result);
+                        result.forEach(element => {
+                            var obj = {
+                                id: element.id,
+                                label: element.name,
+                            }
+                            this.options2[index].cities.push(obj)
+                        });
+                        console.log("结果",this.options2);
+                    })
+                } 
+            })
+            
         },
 
         handleImageAdded: function(file, Editor, cursorLocation) {
