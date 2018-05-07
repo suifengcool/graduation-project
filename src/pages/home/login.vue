@@ -56,7 +56,7 @@ export default {
         submit() {
             this.$refs.loginForm.validate(val => {
                 if(val){
-                    vm.fetch.post('/users/cookie',{ ...this.form }).then(data=>{
+                    vm.fetch.post('/users/login',this.form).then(data=>{
                         console.log('data:',data)
                     })
                 } 
