@@ -102,18 +102,18 @@ export default {
         console.log(val)
       },
       init(){
-        // getgoodsCategory().then((data)=>{ //获取商品分类
-          this.options=[
-        {
-          parentId:0,
-          name:'xxx',
-          icon:'',
-          weight:'1',
-          list:[]
-          }
-          ]
-      //     console.log(data,"商品分类")
-      //   })
+      //   vm.fetch.post("/mechanism/attachedInformationList/0").then(res => {
+      //  this.data.list= res.data
+      //  this.loading = false
+      // //  console.log(res.data)
+      //  // 增加weight片段
+      //   this.weights =  this.data.list.map((item,index)=>{
+      //     return item.weight
+      //   })       
+      // })
+        vm.fetch.get("/classify/list?page=1&pageSize=10").then(res => {
+          cosole.log(res);
+        })
       },
       saveSon(res,resID){
         // var newAddDad={}
