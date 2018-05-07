@@ -100,7 +100,14 @@ export default {
         pageSize: 8,
         topicsName: null,//搜索
       },
-      formOption: {},
+      data:{
+        page:1,
+        pageSize:10,  
+      },
+      formOption: {
+        acount: '',
+        videoUrl: '' 
+      },
       dialogFormVisible: false,
       options: [{
           value: '选项1',
@@ -132,6 +139,9 @@ export default {
 
     created () {
         vm.config.title("视频管理");
+          vm.fetch.get('/video/add',{...this.data}).then(data=>{
+            console.log(data)
+          })
     },
 
     methods: {
@@ -150,12 +160,9 @@ export default {
      save() {
 
      },
-     successIdCardBack2() {
-
+     successIdCardBack2(val) {
+       this.formOption.videoUrl = val
      },
-    success2() {
-
-    },
     successIdCardBack2() {
 
     },
