@@ -3,7 +3,7 @@
     <Carousel trigger="click" height="550px"  arrow="never">
       <CarouselItem v-for="(item, index) in data" :key="index">
         <!-- <a :href = "item.url"> -->
-          <div class="banner_01" :style="{backgroundImage:`url(${item.imgUrl})`}">
+          <div class="banner_01" :style="{backgroundImage:`url(${item.path})`}">
             </div>
         <!-- </a> -->
       </CarouselItem>

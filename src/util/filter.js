@@ -256,3 +256,5 @@ export const numFilter = val => {
     return Number(val / 100000000).toFixed(2) + '亿'
   }
 }
+
+export  const pictureType= (r,c,val) => ['标题图','banner图','首页图'][val]
