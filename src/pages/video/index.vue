@@ -1,27 +1,6 @@
 <template>
     <div class='videomanage content'>
-      <div class="content-title">视频列表<Button type="primary"  round ><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
-       <!-- 搜索 -->
-      <div class="time_search">
-        <div class="search kind">
-          <!-- <h2>搜索：</h2> -->
-          <Input placeholder="请输入视频名称" style="width: 378px;" v-model="seek.topicsName"/>
-        </div>
-        <div class="block">
-          <DatePicker
-            v-model="value5"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            align="left"
-            @change="schedule"
-            >
-          </DatePicker>
-          <Button  icon="el-icon-search" style="margin-left: 67px;background:#51c5ff;color:#fff;" @click='search'>搜索</Button>
-          <Button  icon="el-icon-refresh" style="margin-left:40px;background:#ecf5ff"   @click="reset">重置</Button>
-        </div>
-      </div>
+      <div class="content-title">视频列表<Button type="primary"  round @click=""><i class="iconfont icon-jiahao"></i>新建视频</Button></div>
       <div class="table_content">
         <Table :data="option.list">
           <TableColumn prop="acount" label="视频名称"/>
@@ -36,7 +15,7 @@
           </TableColumn>
         </Table>
       </div>
-        <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone" title="新建视频">
+        <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone">
           <Form :model="formOption" label-position="right" label-width="80px">
             <FormItem label="视频名称" >
               <Input v-model="formOption.acount" />
@@ -85,7 +64,8 @@ import {
   Form,
   FormItem,
   Select,
-  Option, 
+  Option,
+  MessageBox 
   } from 'element-ui';
 import MyPagination from '../../components/MyPagination.vue'
 import UploadFile from '../../components/UploadFile.vue'
@@ -109,7 +89,8 @@ export default {
       FormItem,
       Select,
       Option,
-      UploadFile 
+      UploadFile,
+      MessageBox 
     },
     data () {
 		return {
@@ -168,8 +149,40 @@ export default {
      },
      save() {
 
-     } 
+     },
+     successIdCardBack2() {
 
+     },
+    success2() {
+
+    },
+    successIdCardBack2() {
+
+    },
+    del() {
+       MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          // delgoodsCategory(res.id).then((data)=>{ //获取商品分类
+          //  if(data.code==815||data.code==811){
+          //     return;
+          //   }
+          //   this.init()
+             vm.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          // });
+        }).catch(() => {
+          vm.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    }
 	}
 }
 </script>

@@ -10,7 +10,6 @@ let config1 = [
     '/picture/index',                  // 图片管理
     '/classify/index',                 // 分类管理
     '/video/index',                    // 视频管理
-    '/video/creat',                    //新建或者编辑视频
     '/user/index',                     // 管理员列表
 ]
 
