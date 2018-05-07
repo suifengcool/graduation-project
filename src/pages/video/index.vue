@@ -139,7 +139,7 @@ export default {
 
     created () {
         vm.config.title("视频管理");
-          vm.fetch.get('http://192.168.1.247:8089/video/add',{...this.data}).then(data=>{
+          vm.fetch.get('/video/add',{...this.data}).then(data=>{
             console.log(data)
           })
     },
