@@ -11,9 +11,9 @@
         <i class="el-icon-arrow-left"></i><span>返回上一级</span>
       </div>
       <div class="details">
-        <h2>{{caseInfo.name}}</h2>
+        <h2>{{caseInfo.title}}</h2>
         <div class="author">作者 :{{caseInfo.author}}</div>
-        <img :src="caseInfo.cover" alt="">
+        <img :src="caseInfo.url" alt="" onerror="onerror=null;src='/static/img/solve5.png'">
         <div class="description" v-html="caseInfo.content">
         </div>
       </div>
@@ -33,20 +33,25 @@
       return {
         id: this.$route.params.id,
         caseInfo: {
-          name:'树莓后台管理',
+          title:'',
           author:'小可爱',
-          cover:'/static/img/solve5.png'
+          url:'',
+          content:''
         }
       }
     },
   
     created() {
       // 获取详情
-      // vm.fetch.get('/information/get/' + this.id).then(res => {
-      //   console.log('res', res)
-      //   this.caseInfo = res.data
-
-      // })
+      vm.fetch.get('/articles/' + this.id).then(res => {
+        console.log('res', res)
+        if (res.data) {
+          this.caseInfo = res.data
+          console.log(this.caseInfo)
+        }
+        
+        
+      })
     },
   
     methods: {}
