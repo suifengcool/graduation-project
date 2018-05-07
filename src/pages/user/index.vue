@@ -3,13 +3,13 @@
        <div class="content-title">管理员列表<Button type="primary"  round class="add" @click="add">新增管理员</Button></div>
        <div class="table_content">
          <Table :data="option.list">
-            <TableColumn prop="acount" label="账号"/>
-            <TableColumn prop="name" label="姓名" />
-            <TableColumn prop="userImg" label="头像">
+            <TableColumn prop="userName" label="账号"/>
+            <TableColumn prop="roleName" label="角色" />
+            <!-- <TableColumn prop="userImg" label="头像">
               <template slot-scope="scope">
                 <span class="img_box"><img :src="scope.row.userImg" alt=""></span>
               </template>
-            </TableColumn>
+            </TableColumn> -->
             <TableColumn prop="createTime" label="创建时间"/>           
             <TableColumn label="操作" width="240" fixed="right">
               <template slot-scope="scope">
@@ -18,14 +18,14 @@
               </template>
            </TableColumn>
          </Table>
-         <MyPagination :page="option.page" :pageSize='option.pageSize' :total="option.total" :pageSizes=[10]></MyPagination>
+         <MyPagination :page="option.page" :pageSize='option.pageSize' :total="option.total" :pageSizes=[10] :method="getUserList"></MyPagination>
         </div>
         <div class="log">
               <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true" class="user_log">
                <Form :model="formOption" label-position="right" label-width="80px">
-                 <Avaters :defaultPic="formOption.userImg"  method="success" @success="getImg" width='100' height="100"></Avaters>
-                 <FormItem label="账号" >
-                    <Input v-model="formOption.acount" disabled/>
+                 <!-- <Avaters :defaultPic="formOption.userImg"  method="success" @success="getImg" width='100' height="100"></Avaters> -->
+                 <FormItem label="账号">
+                    <Input v-model="formOption.userName" disabled/>
                  </FormItem>
                  <FormItem label="新密码">
                     <Input v-model="formOption.password"/>
@@ -33,16 +33,16 @@
               </Form> 
                <div slot="footer" class="dialog-footer">
                 <Button>取消</Button>
-                <Button type="primary" @click="save">确定修改</Button>
+                <Button type="primary" @click="save()">确定修改</Button>
                </div>
             </Dialog >
             <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true" class="user_log">
                <Form :model="addOption" status-icon label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
-                  <Avaters :defaultPic="addOption.userImg || 'http://www.qqzhi.com/uploadpic/2014-10-08/210702213.jpg'"  method="success1" @success1="getImg1" width='100' height="100"></Avaters>
+                  <!-- <Avaters :defaultPic="addOption.userImg || 'http://www.qqzhi.com/uploadpic/2014-10-08/210702213.jpg'"  method="success1" @success1="getImg1" width='100' height="100"></Avaters> -->
                  <FormItem label="账号" prop="userName">
                     <Input v-model="addOption.userName"  placeholder="请输入账号"/>
                  </FormItem>
-                  <FormItem label="角色名" prop="roleName">
+                  <!-- <FormItem label="角色名" prop="roleName">
                     <Select v-model="addOption.roleName">
                       <Option  v-for="(item,index) in selectOption"
                         :key="index"
@@ -50,7 +50,7 @@
                         :value="item.value">
                       </Option>
                     </Select>
-                 </FormItem>
+                 </FormItem> -->
                  <FormItem label="密码" prop="password">
                     <Input v-model="addOption.password"  placeholder="请输入密码"/>
                  </FormItem>
@@ -71,7 +71,7 @@
 <script>
 import Avaters from "../../components/Avaters.vue"
 import MyPagination from "../../components/MyPagination.vue"
-import { Button,Table,TableColumn,Input,Dialog,Form,FormItem,Select,Option} from 'element-ui';
+import { Button,Table,TableColumn,Input,Dialog,Form,FormItem,Select,Option,MessageBox} from 'element-ui';
 export default {
     name: 'user',
     components: {
@@ -85,7 +85,8 @@ export default {
       Avaters,
       MyPagination,
       Select,
-      Option
+      Option,
+      MessageBox
     },
     data () {
 		return {
@@ -94,18 +95,17 @@ export default {
       selectOption:[{ value:1, label: "超级管理员"}, {value:2, label: "管理员"}],
       formOption:{
         id:null,
-        acount:null,
-        userImg:null,
+        userName:null,
         password:null,
+        roleName:null,
       },
       addOption:{
         userName:null,
         password:null,
-        roleName:null,
-        
+        roleName:null,       
       },
       FormRules:{
-        roleName:[{required: true,trigger: 'blur',message:'请选择角色'},],
+        // roleName:[{required: true,trigger: 'blur',message:'请选择角色'},],
         password:[{ 
           required: true,
           validator:  (rule, value, callback)=>{
@@ -148,12 +148,7 @@ export default {
         page:1,
         pageSize:10,
         total:null,
-        list:[
-          {acount:15827605588,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:1},
-          {acount:15827605599,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:2},
-          {acount:15827605529,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:3},
-          {acount:15827605566,name:'isName',userImg:'http://cdn.duitang.com/uploads/item/201409/08/20140908120442_vBjPY.thumb.700_0.jpeg',createTime:'2018.5.6',id:4},
-        ]
+        list:[]
       }
 		}
     },
@@ -162,32 +157,71 @@ export default {
     },
 
     methods: {
-     edit(option){
-       this.dialogFormVisible = true;
-       this.formOption.acount = option.acount;
-       this.formOption.id = option.id;
-       this.formOption.userImg = option.userImg;
-     },
-     del(){
+      getUserList(page={}){ //获取列表
+        vm.fetch.post(`users/list?page=${page.page}&pageSize=${page.pageSize}`)
+        .then(data=>{
+          console.log(data)
+             this.option.page= data.pageNum
+             this.option.total= data.total  
+             this.option.list = data.list 
+          }) 
+        .catch(error=>{console.log(error,"error")}) 
+      },
 
+     edit(option){ //编辑
+       this.dialogFormVisible = true;
+       this.formOption.userName = option.userName;
+      //  this.formOption.roleName = option.roleName;
+        this.formOption.id = option.id;
      },
-     save(){
-       console.log("formOption",this.formOption.acount,this.formOption.password,this.formOption.id) 
+
+     del(option){ //删除
+       MessageBox.confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+          })
+          .then(()=>{
+                var id = option.id
+                vm.fetch.delete(`/users/delete/${id}`) 
+                .then(data=>{
+                    this.$message({
+                        message: '删除成功',
+                        type: 'error'
+                      });
+                }) 
+          })    
+     },
+
+     save(){ //编辑
+       var opt = {}
+      //  opt.id = this.formOption.id
+       opt.password = this.formOption.password
+       vm.fetch.put('/users/update',opt)
+       .then(data=>{console.log("编辑成功")})
+       .catch(error=>{console.log("error")})
      },
      add(){
        this.addNumber = true;      
      },
-     addAcount(){
+     addAcount(){ //添加用户
        this.$refs.addOption.validate((valid)=>{
           if(valid){
-           alert("can add")
            var params = {}
             params.userName=this.addOption.userName,
             params.password=this.addOption.password,
-            params.roleName=this.addOption.roleName.toString(),
-            params.createTime=new Date(),  
-            vm.fetch.post('/users/add',params)
-            .then(data=>{console.log("success")})
+            // params.roleName=this.addOption.roleName.toString(),
+            vm.fetch.post(`/users/add`,params)
+            .then(result=>{
+              if(result.resultCode == 200){
+                  this.$message({
+                    message: '新增成功',
+                    type: 'success'
+                  });
+                 this.addNumber = false; 
+              }    
+            })
             .catch(error=>{console.log(error)})
           }else{
             return false
@@ -211,7 +245,7 @@ export default {
 <style lang="less">
   .user_log{
     .el-dialog{
-      width: 450px;
+      width: 350px;
     }
     .avatar_box{
       position: relative;
