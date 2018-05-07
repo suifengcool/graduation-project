@@ -8,7 +8,7 @@
       </DropdownItem>
       </span>
       <span><img src='../../assets/img/head.png' onerror="javascript:this.src='../../assets/img/head.png';"/></span>
-      <span>小可爱</span>
+      <span>{{data.name}}</span>
       <span>
         <Tooltip class="item" effect="dark" content="退出登录" placement="bottom-start">
           <i class="iconfont icon-dianyuan" @click="quit"></i>
@@ -37,10 +37,8 @@ export default {
 
   methods:{
     quit(){
-      vm.fetch.post('/account/logout').then( data => {
-        window.localStorage.removeItem('UserInfo');
-        vm.$router.replace('/')
-      })
+      window.localStorage.removeItem('userInfo');
+      vm.$router.replace('/')
     }
   }
 }
