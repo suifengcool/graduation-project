@@ -1,6 +1,6 @@
 import Axios from 'axios'
 Axios.defaults.baseURL = '/api'
-Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+Axios.defaults.headers.post['Content-Type'] = 'application/json'
 Axios.defaults.headers["Cache-Control"] = "no-cache" // 禁止缓存（返回刷新数据）
 
 // TODO:请求拦截器,统一处理参数
