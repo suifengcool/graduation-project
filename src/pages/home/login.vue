@@ -58,6 +58,17 @@ export default {
                 if(val){
                     vm.fetch.post('/users/login',this.form).then(data=>{
                         console.log('data:',data)
+                        if(data && data.resultCode === 200){
+                            vm.$message({
+                                type: 'success',
+                                message: '登录成功',
+                                duration: 1000,
+                                onClose: () => {
+                                    window.localStorage.setItem('userInfo', JSON.stringify(data.data.currentUser))
+                                    vm.$router.push('/artical')
+                                }
+                            })
+                        }
                     })
                 } 
             })  

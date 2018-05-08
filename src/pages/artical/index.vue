@@ -6,16 +6,20 @@
             <Table :data="dataList">
                 <TableColumn prop="title" label="标题"/>
                 <TableColumn prop="classify" label="类别" />
-                <TableColumn prop="content" label="内容简介" min-width='300'/>
+                <TableColumn prop="content" label="内容简介" min-width='300'>
+                    <template slot-scope="scope">
+                        <span v-html="scope.row.content"></span>
+                    </template>
+                </TableColumn>
                 <TableColumn prop="createTime" label="创建时间"/>           
                 <TableColumn prop="updateTime" label="更新时间"/>           
                 <TableColumn prop="auth" label="发布人"/>           
                 <TableColumn label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                         <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
-                        <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
+                        <Button type="danger" plain size="small" @click="del(scope.row.id)" >删除</Button>
                     </template>
-               </TableColumn>
+                </TableColumn>
             </Table>
         </div>
 
@@ -38,15 +42,26 @@
                 </Form> 
                 <div slot="footer" class="dialog-footer">
                     <Button >取消</Button>
-                    <Button type="primary">确定</Button>
+                    <Button type="primary" @click="save">确定</Button>
                 </div>
             </Dialog >
+        </div>
+
+        <!-- 分页 -->
+        <div class="pre_search">
+            <MyPagination 
+                :page="data.pageNum" 
+                :pageSize="data.pageSize" 
+                :pageSizes="[10]" 
+                :total="data.total" 
+                :method='getData' />
         </div>
     </div>
 </template>
 
 <script>
-import { Button,Table,TableColumn,Dialog,Form,FormItem,Input,Cascader} from 'element-ui';
+import { Button,Table,TableColumn,Dialog,Form,FormItem,Input,Cascader,MessageBox} from 'element-ui';
+import MyPagination from "../../components/MyPagination.vue"
 import { VueEditor } from 'vue2-editor'
 import md5 from 'md5'
 import moment from 'moment'
@@ -62,23 +77,25 @@ export default {
         Form,
         FormItem,
         Input,
-        Cascader
+        Cascader,
+        MyPagination,
+        MessageBox
     },
     data () {
 		return {
             dataList: [{
-                title: '为了明天',
-                classify: '南方周末',
-                content: '假如没有明天，假如没有明天，假如没有明天，假如没有明天，假如没有明天，假如没有明天，假如没有明天，假如没有明',
-                createTime: '2018-05-07',
-                updateTime: '2018-05-08',
-                auth: 'Xugang'
+                title: '',
+                classify: '',
+                content: '',
+                createTime: '',
+                updateTime: '',
+                auth: ''
             }],
             dialogFormVisible: false,
             modalType: 0,                 // 弹框类型，0新增，1编辑
             formOption: {},
             FormRules: {
-                title: [{ required: true, message: '请输入邮箱地址', trigger: 'blur' }],
+                title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
                 classify: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
                 content: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
             },
@@ -93,6 +110,11 @@ export default {
                 value: 'label',
                 children: 'cities'
             },
+            data:{
+                pageNum: 0,
+                pageSize:10,
+                total: null,
+            }
 
 		}
     },
@@ -107,12 +129,33 @@ export default {
     },
 
     methods: {
-        edit(){
+        edit(data){
+            this.modalType = data ? 1 : 0
+            this.formOption = data
             this.dialogFormVisible = true
         },
         
-        del(){
+        del(id){
+            MessageBox.confirm(`你删除?`, 'warning', '取消确认')
+            .then(() =>
+                vm.fetch.delete(`/articles/delete/${id}`)
+                .then(res=>{
+                    if(res && res.resultCode === 200){
+                        vm.$message({
+                            type: 'success',
+                            message: '删除成功',
+                            duration: 1000
+                        })
+                    }
+                })
+                .catch(({ msg }) => error(msg || '取消失败！请稍后重试...'))
+            )
+        },
 
+        save(){
+            if(this.modalType){
+
+            }
         },
 
         handleItemChange(val) {
@@ -131,7 +174,7 @@ export default {
         },
 
         handleImageAdded: function(file, Editor, cursorLocation) {
-            vm.fetch.get(`/system/qiniu`).then((token) => {
+            vm.fetch.get(`/articles/system/qiniu`).then((token) => {
 
             var formData = new FormData();
             formData.append('key', moment().format('YYYYMMDDHHmmssSSS') + md5(file.name) + file.name.substring(file.name.lastIndexOf('.'), file.name.length))
@@ -147,6 +190,16 @@ export default {
                 }
             })
            })
+        },
+
+        getData(){
+            vm.fetch.get(`/articles/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
+                this.dataList = data.list
+                this.data.pageNum = data.nextPage
+                this.data.total = data.total
+
+                console.log('this.data:',this.data)
+            })
         }
 	}
 }

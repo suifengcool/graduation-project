@@ -98,10 +98,10 @@ export default {
       "children":[]
     }]
 
-    let userInfo = JSON.parse(window.localStorage.getItem('UserInfo'))
+    let userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
 
     // this.data.logo = userInfo.logo
-    // this.data.name = userInfo.name
+    this.data.name = userInfo.userName
   },
 
   methods: {}
