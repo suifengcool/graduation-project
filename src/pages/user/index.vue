@@ -23,7 +23,6 @@
         <div class="log">
               <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true" class="user_log">
                <Form :model="formOption" label-position="right" label-width="80px" :rules="Rules" ref="formOption">
-                 <!-- <Avaters :defaultPic="formOption.userImg"  method="success" @success="getImg" width='100' height="100"></Avaters> -->
                  <FormItem label="账号">
                     <Input v-model="formOption.userName" disabled/>
                  </FormItem>
@@ -32,8 +31,8 @@
                  </FormItem>                
               </Form> 
                <div slot="footer" class="dialog-footer">
-                <Button @click="dialogFormVisible=false">取消</Button>
-                <Button type="primary" @click="save()">确定修改</Button>
+                <Button @click="AddClear">取消</Button>
+                <Button type="primary" @click="save">确定修改</Button>
                </div>
             </Dialog >
             <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true" class="user_log">
@@ -96,7 +95,8 @@ export default {
       },
       Rules:{
          password:[{
-           required: true,
+          required: true,
+          trigger: 'blur' ,     
           validator:  (rule, value, callback)=>{
             if(!value){
                 callback(new Error('请输入密码'));
@@ -172,11 +172,9 @@ export default {
       },
 
      edit(option){ //编辑
-       this.$refs.formOption.clearValidate()
        this.dialogFormVisible = true;
        this.formOption = option;
        this.formOption.password = ""
-
      },
 
      del(option){ //删除
@@ -200,19 +198,28 @@ export default {
      },
 
      save(){ //编辑
-       vm.fetch.put('/users/update',this.formOption)
-       .then(data=>{
-         if(result.resultCode == 200){
-            this.$message({
-                message: '编辑成功',
-                type: 'success'
-            });
-            this.dialogFormVisible = false;
-              this.formOption={}
-              this.getUserList()
-            }
-         })
-       .catch(error=>{console.log("error")})
+      this.$refs.formOption.validate((valid)=>{
+      if(valid){
+          var opt = {}
+          opt.id = this.formOption.id
+          opt.password = this.formOption.password
+          opt.userName = this.formOption.userName
+          vm.fetch.post('/users/update',opt)
+          .then(result=>{
+            if(result.resultCode == 200){
+                this.$message({
+                    message: '编辑成功',
+                    type: 'success'
+                });
+                this.dialogFormVisible = false;
+                this.formOption={}
+                this.getUserList()
+              }
+            })
+          .catch(error=>{console.log("error")})  
+         } 
+      })
+ 
      },
      add(){
        this.addNumber = true;      
@@ -242,15 +249,12 @@ export default {
           }  
         })
      },
-     getImg(url){
-        // this.formOption.userImg = url
-     },
-     getImg1(url){
-      //  this.addOption.userImg = url
-     },
      AddClear(){
        this.addOption = {};
+       this.formOption = {};
        this.addNumber = false;
+       this.dialogFormVisible = false;
+       this.$refs.formOption.clearValidate()
        this.$refs.addOption.clearValidate()
      } 
 	}
