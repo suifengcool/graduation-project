@@ -22,7 +22,7 @@
         </div>
         <div class="log">
               <Dialog :visible.sync="dialogFormVisible" :append-to-body="true"  :center="true" class="user_log">
-               <Form :model="formOption" label-position="right" label-width="80px">
+               <Form :model="formOption" label-position="right" label-width="80px" :rules="Rules" ref="formOption">
                  <!-- <Avaters :defaultPic="formOption.userImg"  method="success" @success="getImg" width='100' height="100"></Avaters> -->
                  <FormItem label="账号">
                     <Input v-model="formOption.userName" disabled/>
@@ -32,25 +32,15 @@
                  </FormItem>                
               </Form> 
                <div slot="footer" class="dialog-footer">
-                <Button>取消</Button>
+                <Button @click="dialogFormVisible=false">取消</Button>
                 <Button type="primary" @click="save()">确定修改</Button>
                </div>
             </Dialog >
             <Dialog :visible.sync="addNumber" :append-to-body="true" :center="true" class="user_log">
                <Form :model="addOption" status-icon label-position="right" label-width="80px" :rules="FormRules" ref="addOption">
-                  <!-- <Avaters :defaultPic="addOption.userImg || 'http://www.qqzhi.com/uploadpic/2014-10-08/210702213.jpg'"  method="success1" @success1="getImg1" width='100' height="100"></Avaters> -->
                  <FormItem label="账号" prop="userName">
                     <Input v-model="addOption.userName"  placeholder="请输入账号"/>
                  </FormItem>
-                  <!-- <FormItem label="角色名" prop="roleName">
-                    <Select v-model="addOption.roleName">
-                      <Option  v-for="(item,index) in selectOption"
-                        :key="index"
-                        :label="item.label"
-                        :value="item.value">
-                      </Option>
-                    </Select>
-                 </FormItem> -->
                  <FormItem label="密码" prop="password">
                     <Input v-model="addOption.password" type="password" placeholder="请输入密码"/>
                  </FormItem>
@@ -104,14 +94,30 @@ export default {
         password:null,
         roleName:null,       
       },
+      Rules:{
+         password:[{
+           required: true,
+          validator:  (rule, value, callback)=>{
+            if(!value){
+                callback(new Error('请输入密码'));
+            }else if(value.length<6){
+              callback(new Error('密码不能少于6位'));
+            }else{
+               callback()
+           }
+           }
+         }] 
+      },
       FormRules:{
-        // roleName:[{required: true,trigger: 'blur',message:'请选择角色'},],
         password:[{ 
           required: true,
           validator:  (rule, value, callback)=>{
            if(!value){
               callback(new Error('请输入密码'));
-           }else if(this.addOption.surePwd !== ''){
+           }else if(value.length<6){
+             callback(new Error('密码不能少于6位'));
+           } 
+           else if(this.addOption.surePwd !== ''){
               this.$refs.addOption.validateField('surePwd');
            }
            callback() 
@@ -150,15 +156,14 @@ export default {
       }
 		}
     },
-
     created () {
     },
 
     methods: {
       getUserList(page={}){ //获取列表
-        vm.fetch.get(`users/list?page=${page.page}&pageSize=${page.pageSize}`)
+        vm.fetch.get(`users/list?page=${page.page || 1}&pageSize=${page.pageSize || 10}`)
         .then(data=>{
-          console.log(data)
+          console.log(data,"aaa")
              this.option.page= data.pageNum
              this.option.total= data.total  
              this.option.list = data.list 
@@ -167,10 +172,11 @@ export default {
       },
 
      edit(option){ //编辑
+       this.$refs.formOption.clearValidate()
        this.dialogFormVisible = true;
-       this.formOption.userName = option.userName;
-      //  this.formOption.roleName = option.roleName;
-        this.formOption.id = option.id;
+       this.formOption = option;
+       this.formOption.password = ""
+
      },
 
      del(option){ //删除
@@ -184,27 +190,26 @@ export default {
               var id = option.id
               vm.fetch.delete(`/users/delete/${id}`) 
               .then(data=>{
-                this.getUserList()
                 this.$message({
                   message: '删除成功',
                   type: 'success'
                 });
+                this.getUserList()
               }) 
           })    
      },
 
      save(){ //编辑
-       var opt = {}
-       opt.id = this.formOption.id
-       opt.password = this.formOption.password
-       vm.fetch.put('/users/update',opt)
+       vm.fetch.put('/users/update',this.formOption)
        .then(data=>{
          if(result.resultCode == 200){
             this.$message({
                 message: '编辑成功',
                 type: 'success'
             });
+            this.dialogFormVisible = false;
               this.formOption={}
+              this.getUserList()
             }
          })
        .catch(error=>{console.log("error")})
@@ -228,6 +233,7 @@ export default {
                   });
                  this.addNumber = false; 
                  this.addOption = {}
+                 this.getUserList()
               }    
             })
             .catch(error=>{console.log(error)})
