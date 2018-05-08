@@ -44,6 +44,7 @@
     created() {
       // 获取详情
       vm.fetch.get('/articles/' + this.id).then(res => {
+        console.log('this.id', this.id)
         console.log('res', res)
         if (res.data) {
           this.caseInfo = res.data

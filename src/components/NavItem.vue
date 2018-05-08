@@ -1,7 +1,7 @@
 <template>
   <div class="navBar-item">
     <MenuItem :index="item.url" v-if="!item.children" @click="select">
-      <span v-if="true || !hide">{{item.title}}</span>
+      <span v-if="true || !hide">{{item.name}}</span>
     </MenuItem>
     <Submenu :index="index" v-if="item.children">
       <template slot="title">

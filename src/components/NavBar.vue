@@ -17,67 +17,40 @@
 <script>
 import { Menu } from 'element-ui'
 import NavItem from './NavItem.vue'
-const menu = [
-  {
-    "id": 1,
-    "pid": 1,
-    "title": "首页",
-    "url": "/",
-    "num": 0
-  },
-  {
-    "id": 2,
-    "pid": 2,
-    "title": "解决方案",
-    "url": "",
-    "num": 0
-  },
-  {
-    "id": 3,
-    "pid": 3,
-    "title": "学训宝学院",
-    "url": "/home/college/index",
-    "num": 0
-  },
-  {
-    "id": 4,
-    "pid": 4,
-    "title": "服务商",
-    "url": "/home/supplier",
-    "num": 0
-  },
-  {
-    "id": 5,
-    "pid": 5,
-    "title": "我要入驻",
-    "url": "/home/register",
-    "num": 0
-  },
-  {
-    "id": 6,
-    "pid": 6,
-    "title": "登录管理中心",
-    "url": "/login",
-    "num": 0
-  }
-]
 
 export default {
   name: 'NavBar',
   components: { Menu, NavItem },
   data() {
     return {
-      menus: menu,
+      menus: [],
       hide: false,
       menuList: []
     }
   },
+  created(){
+    vm.fetch.get('/classify/findchildren/1').then(res => {
+        this.menus=res
+        this.menus.unshift({
+          id: 100,
+          name: '首页',
+          url:'/'
+        })
+        this.menus.push({
+          id: 101,
+          name: '视频中心',
+          url:'/home/detail/1000'
+        })
+        this.menus.push({
+          id: 101,
+          name: '登录管理后台',
+          url:'/login'
+        })
+      })
+  },
   computed: {
     active() {
-      let path =
-        this.menuList.find(url => this.$route.path.startsWith(url)) ||
-        this.$route.path
-      return path
+      let path = ''
     }
   }
 }
