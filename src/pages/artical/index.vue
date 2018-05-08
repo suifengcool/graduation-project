@@ -51,7 +51,7 @@
                     </FormItem>                
                 </Form> 
                 <div slot="footer" class="dialog-footer">
-                    <Button >取消</Button>
+                    <Button @click="dialogFormVisible=false">取消</Button>
                     <Button type="primary" @click="save">确定</Button>
                 </div>
             </Dialog >
@@ -117,7 +117,9 @@ export default {
 
     created () {
         // /classify/findchildren/{id}
-        vm.fetch.get('/classify/findchildren/0').then(result=>{
+        this.$confirm = MessageBox.confirm
+        // /{id}
+        vm.fetch.get('/classify/getLevel/0').then(result=>{
             // result
             console.log("数据",result);
             result.forEach(element => {
@@ -139,6 +141,38 @@ export default {
                 this.options2.push(obj)
             });
             console.log("结果",this.options2);
+            this.options2.forEach((item,index)=>{
+                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
+                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                        // result
+                        console.log("数据",result);
+                        result.forEach(element => {
+                            var obj = {
+                                id: element.id,
+                                value: element.id,
+                                label: element.name,
+                                // cities: []
+                            }
+                            if (element.id) {
+                                vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                                    obj.cities = []
+                                    result.forEach(itm=>{
+                                        var objs = {
+                                            id: element.id,
+                                            value: element.id,
+                                            label: element.name,
+                                            // cities: []
+                                        }
+                                        obj.cities.push(objs)
+                                    })
+                                })
+                            }
+                            this.options2[index].cities.push(obj)
+                        });
+                        console.log("结果",this.options2);
+                    })
+                } 
+            })
         })
         this.formOption.classifyId = null
     },
@@ -169,7 +203,7 @@ export default {
         
         del(id,index){
             var that =this
-            MessageBox.confirm(`确认删除?`, '提示', '取消确认')
+            this.$confirm(`确认删除?`, '提示', '取消确认')
             .then(() =>
                 vm.fetch.delete(`/articles/delete/${id}`)
                 .then(res=>{
@@ -181,8 +215,7 @@ export default {
                             message: '删除成功',
                             duration: 1000
                         })
-                        this.dataList.splice(index,1)
-                        this.data.total = this.data.total-1
+                        this.getData()
                     }
                     
                 })
@@ -215,8 +248,7 @@ export default {
                                         message: '删除成功',
                                         duration: 1000
                                     })
-                                    this.dialogFormVisible = true
-                                    
+                                    this.dialogFormVisible = false
                                 }
                             })
                         }else{
@@ -235,9 +267,6 @@ export default {
                     }
                 })
             })
-            
-            
-            
         },
 
         handleItemChange(val) {
@@ -260,49 +289,28 @@ export default {
             //         }
             //     })
             // })
-            this.options2.forEach((item,index)=>{
-                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
-                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                        // result
-                        console.log("数据",result);
-                        result.forEach(element => {
-                            var obj = {
-                                id: element.id,
-                                value: element.id,
-                                label: element.name,
-                                // cities: []
-                            }
-                            this.options2[index].cities.push(obj)
-                        });
-                        console.log("结果",this.options2);
-                    })
-                } 
-            })
+            
             
         },
         changdeclassify(e) {
             console.log(e);
-            
         },
         handleImageAdded: function(file, Editor, cursorLocation) {
             vm.fetch.get(`/articles/system/qiniu`).then((token) => {
+                var formData = new FormData();
+                formData.append('key', moment().format('YYYYMMDDHHmmssSSS') + md5(file.name) + file.name.substring(file.name.lastIndexOf('.'), file.name.length))
+                formData.append('token', token.uptoken);
+                formData.append('file', file);
 
-            var formData = new FormData();
-            formData.append('key', moment().format('YYYYMMDDHHmmssSSS') + md5(file.name) + file.name.substring(file.name.lastIndexOf('.'), file.name.length))
-            formData.append('token', token.uptoken);
-            formData.append('file', file);
-
-            const UPLOAD_URL = location.protocol === 'https:' ? 'https://up.qbox.me' : 'http://up-z0.qiniu.com'
-
-            vm.fetch.post(UPLOAD_URL, formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(result=>{
-                if(result){
-                    let url = token.path + result.key 
-                    Editor.insertEmbed(cursorLocation, 'image', url);
-                }
-            })
+                const UPLOAD_URL = location.protocol === 'https:' ? 'https://up.qbox.me' : 'http://up-z0.qiniu.com'
+                vm.fetch.post(UPLOAD_URL, formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(result=>{
+                    if(result){
+                        let url = token.path + result.key 
+                        Editor.insertEmbed(cursorLocation, 'image', url);
+                    }
+                })
            })
         },
-
         getData(pagedata){
             vm.fetch.get(`/articles/list?page=${pagedata.page}&pageSize=${pagedata.pageSize}`).then(data=>{
                 this.dataList = data.list
