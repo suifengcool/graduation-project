@@ -24,6 +24,7 @@
               <Cascader
                       :options="options2"
                       @active-item-change="handleItemChange"
+                      v-model="formOption.classifyId"
                       :props="props">
               </Cascader>
             </FormItem>
@@ -165,6 +166,22 @@ export default {
                 this.options2.push(obj)
             });
             console.log("结果",this.options2);
+            this.options2.forEach((item,index)=>{
+              if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
+                  vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                      // result
+                      console.log("数据",result);
+                      result.forEach(element => {
+                          var obj = {
+                              id: element.id,
+                              label: element.name,
+                          }
+                          this.options2[index].cities.push(obj)
+                      });
+                      console.log("结果",this.options2);
+                  })
+              } 
+          })
         })
     },
 
@@ -172,22 +189,7 @@ export default {
 
       handleItemChange(val) {
            console.log('active item:', val);
-            this.options2.forEach((item,index)=>{
-                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
-                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                        // result
-                        console.log("数据",result);
-                        result.forEach(element => {
-                            var obj = {
-                                id: element.id,
-                                label: element.name,
-                            }
-                            this.options2[index].cities.push(obj)
-                        });
-                        console.log("结果",this.options2);
-                    })
-                } 
-            })
+           
 
       },
       // 新建
@@ -195,10 +197,17 @@ export default {
         this.dialogFormVisible = true 
         this.title = '新建'
         console.log(this.title)
+         this.formOption = {}
+        this.formOption.classifyId = []
       },
-      edit() {
+      edit(data) {
         this.dialogFormVisible = true 
         this.title = '编辑'
+        this.formOption = {}
+        this.formOption.classifyId = []
+            if (data) {
+                this.formOption = {...data,classifyId:[]}
+            }
         },
      save() {
           this.dialogFormVisible = false 
@@ -211,9 +220,19 @@ export default {
           {
             this.$refs.ruleForm.validate((val)=>{
               if(val){
-                vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:null}).then((val)={
+                vm.fetch.get(`/classify/list`).then(result=>{
+                      // result
+                      result.list.forEach(item=>{
+                        if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
+                            vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:item.id}).then((val)=>{
 
+                              this.getData()
+
+                            })
+                        }
+                      })
                 })
+                
               }
             })
           }
@@ -221,9 +240,26 @@ export default {
           else{
             this.$refs.ruleForm.validate((val)=>{
               if(val){
-                vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:null}).then((val)={
-
+                vm.fetch.get(`/classify/list`).then(result=>{
+                      // result
+                      result.list.forEach(item=>{
+                        if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
+                            vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:item.id}).then(res=>{
+                        
+                                if(res && res.resultCode == 200){
+                                  console.log(99999999999999999);
+                                  vm.$message({
+                                      type: 'success',
+                                      message: '新增成功',
+                                      duration: 1000
+                                  })
+                                  this.getData()
+                              }
+                             })
+                        }
+                      })
                 })
+                
               }
             })
           }
@@ -233,6 +269,7 @@ export default {
           this.data.list = data.list
           this.data.pageNum = data.pageNum
           this.data.pageSize = data.pageSize
+          this.data.total = data.total
         
       })
      },
@@ -243,7 +280,7 @@ export default {
     del(id) {
           MessageBox.confirm(`你删除?`, 'warning', '取消确认')
     .then(() =>
-        vm.fetch.delete(`/video/delete${id}`)
+        vm.fetch.delete(`/video/delete/${id}`)
         .then(res=>{
             if(res && res.resultCode === 200){
                 vm.$message({
@@ -251,6 +288,7 @@ export default {
                     message: '删除成功',
                     duration: 1000
                 })
+               this.getData()
             }
         })
         .catch(({ msg }) => error(msg || '取消失败！请稍后重试...'))
