@@ -97,7 +97,7 @@ export default {
         return
       }
 
-      vm.fetch.get(`/system/qiniu`).then((token) => {
+      vm.fetch.get(`/articles/system/qiniu`).then((token) => {
         var formData = new FormData();
         formData.append('key', moment().format('YYYYMMDDHHmmssSSS') + md5(file.name) + file.name.substring(file.name.lastIndexOf('.'), file.name.length))
         formData.append('token', token.uptoken);
