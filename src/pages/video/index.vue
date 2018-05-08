@@ -224,9 +224,18 @@ export default {
                       // result
                       result.list.forEach(item=>{
                         if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
-                            vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:item.id}).then((val)=>{
-
-                              this.getData()
+                            vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:item.id}).then(res=>{
+                          if(res && res.resultCode == 200){
+                                  console.log(99999999999999999);
+                                  vm.$message({
+                                      type: 'success',
+                                      message: '新增成功',
+                                      duration: 1000
+                                  })
+                                  this.dialogFormVisible = false
+                                  this.formOption = {}
+                                  this.getData()
+                              }
 
                             })
                         }
@@ -244,15 +253,17 @@ export default {
                       // result
                       result.list.forEach(item=>{
                         if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
-                            vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:item.id}).then(res=>{
+                            vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl, createTime:null,updateTime:null,userId:user,classifyId:item.id}).then(res=>{
                         
                                 if(res && res.resultCode == 200){
                                   console.log(99999999999999999);
                                   vm.$message({
                                       type: 'success',
-                                      message: '新增成功',
+                                      message: '编辑成功',
                                       duration: 1000
                                   })
+                                  this.dialogFormVisible = false
+                                  this.formOption = {}
                                   this.getData()
                               }
                              })
