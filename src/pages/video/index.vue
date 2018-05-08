@@ -228,11 +228,12 @@ export default {
             })
           }
      },
-     getData(){
-        vm.fetch.get(`/video/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
-          this.data = data
-          console.log(this.data)
-         this.data = {...data,...this.data}
+     getData(pagedata){
+        vm.fetch.get(`/video/list?page=${pagedata?pagedata.page:this.data.pageNum}&pageSize=${pagedata?pagedata.pageSize:10}`).then(data=>{
+          this.data.list = data.list
+          this.data.pageNum = data.pageNum
+          this.data.pageSize = data.pageSize
+        
       })
      },
      successIdCardBack2(val) {
