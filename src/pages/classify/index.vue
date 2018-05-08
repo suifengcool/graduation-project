@@ -20,7 +20,7 @@
           <CollapseItem v-for="(item,index) in options" :key="index" :name="item.id">
             <template slot="title">
               <Row type="flex" align="middle" justify="center">
-                <Col :span="5"><Input v-model.trim="item.name"  placeholder="请输入主分类名称" style="width:200px"></Input></Col>
+                <Col :span="5"><Input v-model.trim="item.name"  placeholder="请输入主分类名称" style="width:200px" @click.stop.native="xiaokeai"></Input></Col>
                 <Col :span="5">
                   <div>{{detailTimeFilter(0,0,item.createTime)}}</div>
                 </Col>
@@ -109,34 +109,32 @@ export default {
           console.log(res);
         })
       },
+      xiaokeai(){
+
+      },
       changeStatus(res){
         if(res){
           vm.fetch.get(`/classify/findchildren/${res}`).then(res => {
           this.optionss=res;
           console.log(res,"xxx");
         })
+        }else{
+          this.optionss=[]
         }
       },
       saveSon(res,resID){
         var newAddDad={}
         if(res.id){
-          // console.log("修改")
-          // newAddDad.parentId=resID
-          // newAddDad.name = res.name
-          // newAddDad.icon = res.icon
-          // newAddDad.weight=res.weight
-          // updategoodsCategory(res.id,newAddDad).then((data)=>{ //新增商品分类
-          //   if(data.code==812||data.code==813){
-          //     return;
-          //   }
-          //   this.init()
-          //   this.$message({
-          //     type: 'success',
-          //     message: '修改成功!'
-          //   });
-          //   newAddDad={}
-          //   // console.log("zzzz",newAddDad)
-          // })
+          newAddDad.id=res.id
+          newAddDad.name = res.name
+          vm.fetch.put("/classify/update",newAddDad).then(data => {
+            this.$message({
+              type: 'success',
+              message: '修改成功!'
+            });
+            this.init()
+            newAddDad={}
+          })
         }else{
           console.log("新增")
           newAddDad.parentId=resID
@@ -162,26 +160,19 @@ export default {
           console.log("修改")
           this.options.forEach((element,key) => {
             if(element.id==res.id){
-              // newAddDad.parentId=0
-              // newAddDad.name = this.options[key].name
-              // newAddDad.icon = this.options[key].icon
-              // newAddDad.weight=this.options[key].weight
+              newAddDad.id=res.id
+              newAddDad.name = this.options[key].name
             }
           })
-          // updategoodsCategory(res.id,newAddDad).then((data)=>{ 
-          // if(data.code==812||data.code==813){
-          //     return;
-          //   }
-          //   this.init()
-          //   this.$message({
-          //     type: 'success',
-          //     message: '修改成功!'
-          //   });
-          //   newAddDad={}
-          //   // console.log("zzzz",newAddDad)
-          // })
+          vm.fetch.put("/classify/update",newAddDad).then(data => {
+            this.$message({
+              type: 'success',
+              message: '修改成功!'
+            });
+            this.init()
+            newAddDad={}
+          })
         }else{
-
           this.options.forEach((element,key) => {
             if(!element.id){
               // newAddDad.parentId=0
