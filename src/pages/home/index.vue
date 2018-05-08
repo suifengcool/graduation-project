@@ -23,8 +23,7 @@
                       <ul class="detail">
                         <li v-for="(ele,idx) in item.list" :key="idx">
                           <router-link :to="`/home/detail/${idx}`">
-                            {{ele.content}}
-                            <!-- <span   v-html="ele.content" ></span>                      -->
+                            <span   v-html="ele.content" ></span>                     
                           </router-link>
                         </li>
                       </ul>
@@ -73,22 +72,18 @@
       vm.fetch.get('pictures/list').then(res => {
         this.carousel.list = res.list
       })
+
+      this.dataList = []
       // 获取分类接口
       vm.fetch.get('/classify/findchildren/2').then(res => {
-        let arr = []
         res.forEach((item, index) => {
           let obj = {}
           obj.id = item.id
           obj.name = item.name
           vm.fetch.get('/articles/list?type=' + item.id).then(res => {
             obj.list = res.list
+            this.dataList.push(obj)
           })
-          arr.push(obj)
-        })
-        console.log('arr:', arr)
-        this.dataList = arr
-        this.dataList.forEach((ele,i)=>{
-          ele.id += ''
         })
 
         console.log('this.dataList:',this.dataList)
