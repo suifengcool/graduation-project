@@ -178,7 +178,7 @@
 
 //      删除
       del(row){
-        vm.fetch.DELETE(`/pictures/delete/ids=${row.id}`).then(data => {
+        vm.fetch.delete(`/pictures/delete/${row.id}`).then(data => {
           this.getData()
         })
       },
