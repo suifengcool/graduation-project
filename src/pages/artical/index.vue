@@ -5,7 +5,7 @@
         <div class="table_content" style="background:#fff;padding-bottom:20px">
             <Table :data="dataList">
                 <TableColumn prop="title" label="标题"/>
-                <TableColumn prop="classify" label="类别" />
+                <TableColumn prop="classifyName" label="类别" />
                 <TableColumn prop="content" label="内容简介" min-width='300'>
                     <template slot-scope="scope">
                         <span v-html="scope.row.content"></span>
@@ -38,7 +38,7 @@
                     <FormItem label="标题" prop="title">
                         <Input v-model="formOption.title"/>
                     </FormItem>
-                    <FormItem label="分类" prop="classify">
+                    <FormItem label="分类" prop="classifyId">
                         <Cascader
                             :options="options2"
                             @active-item-change="handleItemChange"
@@ -110,7 +110,9 @@ export default {
                 pageNum: 1,
                 pageSize:10,
                 total: null,
-            }
+            },
+            userId:null
+
 
 		}
     },
@@ -118,8 +120,8 @@ export default {
     created () {
         // /classify/findchildren/{id}
         this.$confirm = MessageBox.confirm
-        // /{id}
-        vm.fetch.get('/classify/getLevel/0').then(result=>{
+        // /{id}findchildren/{id}
+        vm.fetch.get('/classify/findchildren/0').then(result=>{
             // result
             console.log("数据",result);
             result.forEach(element => {
@@ -142,10 +144,16 @@ export default {
             });
             console.log("结果",this.options2);
             this.options2.forEach((item,index)=>{
-                if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
+                 console.log("结果",this.options2);
+                if ( !this.options2[index].cities.length) {
                     vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+
                         // result
                         console.log("数据",result);
+                        if (result.length<=0) {
+                            return
+                        }
+                        // this.options2[index].cities = []
                         result.forEach(element => {
                             var obj = {
                                 id: element.id,
@@ -173,8 +181,14 @@ export default {
                     })
                 } 
             })
+            
         })
         this.formOption.classifyId = null
+        // this.userId = localStorage.getData
+        var userInfo= JSON.parse(localStorage.getItem('userInfo'));
+        console.log(66666666666666,userInfo);
+        
+        this.userId = userInfo.id
     },
 
     watch:{
@@ -194,7 +208,9 @@ export default {
             this.dialogFormVisible = true
             
             if (data) {
-                this.formOption = data
+                this.formOption = {...data,classifyId:[]}
+            }else{
+                this.formOption = {content:""}
             }
 
 
@@ -232,41 +248,57 @@ export default {
         save(){
             // if(this.modalType){
 
-            // }
-            vm.fetch.get(`/classify/list`)
-            .then(res=>{
-                res.list.forEach(item=>{
-                    if (item.name == this.formOption.classifyId[1]) {
-                        this.formOption.classifyId = item.id
-                        if (this.modalType == 1) {
-                            this.formOption = data
-                            vm.fetch.post(`/articles/update`,{...this.formOption})
-                            .then(res=>{
-                                if(res && res.resultCode === 200){
-                                    vm.$message({
-                                        type: 'success',
-                                        message: '删除成功',
-                                        duration: 1000
-                                    })
-                                    this.dialogFormVisible = false
-                                }
-                            })
-                        }else{
-                            vm.fetch.post(`/articles/add`,{...this.formOption})
-                            .then(res=>{
-                                if(res && res.resultCode === 200){
-                                    vm.$message({
-                                        type: 'success',
-                                        message: '删除成功',
-                                        duration: 1000
-                                    })
+            // }        
+                        console.log("分类",this.formOption.classifyId);
+                        vm.fetch.get(`/classify/list`)
+                        .then(res=>{
+                            console.log(res.list);
+                            res.list.forEach(it=>{
+                                if (it.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
+                                    // console.log();
                                     
+                                    if (this.modalType == 1) {
+                                        // this.formOption = data
+                                        vm.fetch.put(`/articles/update`,{content:this.formOption.content,
+                                        title:this.formOption.title,
+                                        id: this.formOption.id,
+                                        classifyId:it.id,userId:this.userId})
+                                        .then(res=>{
+                                            if(res && res.resultCode === 200){
+                                                vm.$message({
+                                                    type: 'success',
+                                                    message: '编辑成功',
+                                                    duration: 1000
+                                                })
+                                                this.dialogFormVisible = false
+                                                this.formOption = {}
+                                                this.getData()
+                                                
+                                            }
+                                        })
+                                    }else{
+                                        console.log(33333333);
+                                        
+                                        vm.fetch.post(`/articles/add`,{...this.formOption,classifyId:it.id,userId:this.userId})
+                                        .then(res=>{
+                                            if(res && res.resultCode === 200){
+                                                vm.$message({
+                                                    type: 'success',
+                                                    message: '新增成功',
+                                                    duration: 1000
+                                                })
+                                                this.dialogFormVisible = false
+                                                this.formOption = {}
+                                                this.getData()
+                                            }
+                                        })
+                                    }
                                 }
                             })
-                        }
-                    }
-                })
-            })
+                            
+                        })
+                        // this.formOption.classifyId = 3
+                        
         },
 
         handleItemChange(val) {
@@ -312,11 +344,13 @@ export default {
            })
         },
         getData(pagedata){
-            vm.fetch.get(`/articles/list?page=${pagedata.page}&pageSize=${pagedata.pageSize}`).then(data=>{
+            console.log("获取");
+            console.log();
+            
+            vm.fetch.get(`/articles/list?page=${pagedata?pagedata.page:this.data.pageNum}&pageSize=${pagedata?pagedata.pageSize:10}`).then(data=>{
                 this.dataList = data.list
                 this.data.pageNum = data.pageNum
                 this.data.total = data.total
-
                 console.log('this.data:',this.data)
             })
         }
