@@ -16,8 +16,8 @@
         </Table>
       </div>
         <Dialog :visible.sync="dialogFormVisible" :append-to-body="true" custom-class="dialogone">
-          <Form :model="formOption" label-position="right" label-width="80px" ref="ruleForm">
-            <FormItem label="视频名称" >
+          <Form :model="formOption" label-position="right" label-width="80px" ref="ruleForm" :rules="FormRules">
+            <FormItem label="视频名称"  prop="name">
               <Input v-model="formOption.name"/>
             </FormItem>
             <FormItem label="分类">
@@ -126,6 +126,11 @@ export default {
       },
       dialogFormVisible: false,
       value: '',
+      FormRules: {
+        name: [{ required: true, message: '请输入视频名称', trigger: 'blur' }],
+        classify: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
+        content: [{ required: true, message: '请输入正确的邮箱地址', trigger: ['blur'] }],
+      },
       option:{
         list:[
           {acount:15827605599,url:'http://www.baidu.com',password:'......',createTime:'2018.5.6',id:1},
@@ -164,10 +169,7 @@ export default {
     },
 
     methods: {
-      edit() {
-        this.dialogFormVisible = true 
-        this.title = '编辑'
-        },
+
       handleItemChange(val) {
            console.log('active item:', val);
             this.options2.forEach((item,index)=>{
@@ -194,17 +196,22 @@ export default {
         this.title = '新建'
         console.log(this.title)
       },
+      edit() {
+        this.dialogFormVisible = true 
+        this.title = '编辑'
+        },
      save() {
           this.dialogFormVisible = false 
           console.log(this.title)
-          console.log(window.localStorage.getItem('userInfo'))
+          console.log('data',JSON.parse(window.localStorage.getItem('userInfo')))
+          let user = JSON.parse(window.localStorage.getItem('userInfo')).id
           console.log(this.formOption.videoUrl )
           //新建
           if(this.title == '新建')
           {
             this.$refs.ruleForm.validate((val)=>{
               if(val){
-                vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:10,classifyId:1}).then((val)={
+                vm.fetch.post(`video/add`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:null}).then((val)={
 
                 })
               }
@@ -214,17 +221,19 @@ export default {
           else{
             this.$refs.ruleForm.validate((val)=>{
               if(val){
-                vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:'2018.7.7',updateTime:'2018.4.10',userId:10,classifyId:1}).then((val)={
+                vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl,createTime:null,updateTime:null,userId:user,classifyId:null}).then((val)={
 
                 })
               }
             })
           }
      },
-     getData(){
-        vm.fetch.get(`/video/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
-         console.log(data)
-         this.data = {data}
+     getData(pagedata){
+        vm.fetch.get(`/video/list?page=${pagedata?pagedata.page:this.data.pageNum}&pageSize=${pagedata?pagedata.pageSize:10}`).then(data=>{
+          this.data.list = data.list
+          this.data.pageNum = data.pageNum
+          this.data.pageSize = data.pageSize
+        
       })
      },
      successIdCardBack2(val) {
