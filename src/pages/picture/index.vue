@@ -122,7 +122,6 @@
           this.data = data
           this.data.pageNum = data.nextPage
           this.data.total = data.total
-
           console.log('this.data:',this.data)
         })
       },
