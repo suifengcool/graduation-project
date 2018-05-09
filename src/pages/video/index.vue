@@ -31,7 +31,7 @@
             <FormItem label="上传视频">
               <Col :span="24">
                 <div class="uploadimgShow">
-                  <UploadFile :defaultPic="formOption.videoUrl || ''" method="success2" width='100%' height="180" @success2="successIdCardBack2"></UploadFile>
+                  <UploadFile :defaultPic="formOption.videoUrl || ''" method="success2" width='100%' height="180" @success2="successIdCardBack2" ref="videPload"></UploadFile>
                 </div>
               </Col>
             </FormItem>                
@@ -145,43 +145,67 @@ export default {
 
     created () {
         vm.config.title("视频管理");
-              vm.fetch.get('/classify/list').then(result=>{
+          vm.fetch.get('/classify/findchildren/0').then(result=>{
             // result
             console.log("数据",result);
-            result.list.forEach(element => {
+            result.forEach(element => {
                 if (element.type == 1) {
                     var obj = {
-                        ids: element.parentId,
+                        ids: element.id,
+                        value: element.id,
                         label: element.name,
-                        // cities: []
+                        cities: []
                     }
                 }else{
                     var obj = {
-                        ids: element.parentId,
+                        ids: element.id,
+                        value: element.id,
                         label: element.name,
                         cities: []
                     }
                 }
-                
                 this.options2.push(obj)
             });
             console.log("结果",this.options2);
             this.options2.forEach((item,index)=>{
-              if (val.indexOf(item.label) > -1 && !this.options2[index].cities.length) {
-                  vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                      // result
-                      console.log("数据",result);
-                      result.forEach(element => {
-                          var obj = {
-                              id: element.id,
-                              label: element.name,
-                          }
-                          this.options2[index].cities.push(obj)
-                      });
-                      console.log("结果",this.options2);
-                  })
-              } 
-          })
+                 console.log("结果",this.options2);
+                if ( !this.options2[index].cities.length) {
+                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+
+                        // result
+                        console.log("数据",result);
+                        if (result.length<=0) {
+                            return
+                        }
+                        // this.options2[index].cities = []
+                        result.forEach(element => {
+                            var obj = {
+                                id: element.id,
+                                value: element.id,
+                                label: element.name,
+                                // cities: []
+                            }
+                            if (element.id) {
+                                vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                                    obj.cities = []
+                                    result.forEach(itm=>{
+                                        var objs = {
+                                            id: element.id,
+                                            value: element.id,
+                                            label: element.name,
+                                            // cities: []
+                                        }
+                                        obj.cities.push(objs)
+                                    })
+                                })
+                            }
+                            this.options2[index].cities.push(obj)
+                        });
+                        console.log("结果",this.options2);
+                    })
+                } 
+            })
+            
         })
     },
 
@@ -198,7 +222,15 @@ export default {
         this.title = '新建'
         console.log(this.title)
          this.formOption = {}
+         this.formOption.videoUrl = ''
         this.formOption.classifyId = []
+        // var
+        var obj = this.$refs
+        console.log(
+          this.$refs.videPload
+        );
+        
+        // this.$refs.videUpload.$emit('clearUrl') 
       },
       edit(data) {
         this.dialogFormVisible = true 
@@ -207,6 +239,7 @@ export default {
         this.formOption.classifyId = []
             if (data) {
                 this.formOption = {...data,classifyId:[]}
+                console.log(data.id)
             }
         },
      save() {
@@ -253,7 +286,7 @@ export default {
                       // result
                       result.list.forEach(item=>{
                         if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
-                            vm.fetch.post(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl, createTime:null,updateTime:null,userId:user,classifyId:item.id}).then(res=>{
+                            vm.fetch.put(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl, userId:user,id:this.formOption.id,createTime:this.formOption.createTime,updateTime:null,}).then(res=>{
                         
                                 if(res && res.resultCode == 200){
                                   console.log(99999999999999999);

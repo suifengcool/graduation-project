@@ -120,6 +120,9 @@ export default {
         this.showLoading=true
       }
     },
+    clearUrl() {
+      this.url = null
+    }
   }
 }
 </script>
