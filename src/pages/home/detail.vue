@@ -42,6 +42,7 @@
     data() {
       return {
         id: this.$route.params.id,
+        flag:this.$route.query.id,
         newsNum:{},
         news:[],
         caseInfo: {
@@ -56,24 +57,22 @@
   
     created() {
       // 获取详情
-      vm.fetch.get('/articles/' + this.id).then(res => {
-        console.log('this.id', this.id)
-        // console.log('res', res)
-        if (res.data) {
-          this.caseInfo = res.data
-          // console.log(this.caseInfo)
-        }
-      })
-      vm.fetch.get('/classify/findchildren/2').then(res => {
-        // console.log(res,55555)
-        this.news=res
-        vm.fetch.get('/articles/list?type=' + this.news[0].id).then(res => {
-          // console.log(res,7777)
-          // this.news=res
-          this.caseInfo=res.list[0]
-          console.log(this.newsNum,'ooooo')
+      if (this.flag) {
+          vm.fetch.get('/classify/getLevel/'+this.id).then(res => {
+          this.news=res
+          vm.fetch.get('/classify/findchildren/' + this.news[0].id).then(res => {
+            this.caseInfo=res.list[0]
+          })
         })
-      })
+      }else{
+          vm.fetch.get('/articles/' + this.id).then(res => {
+          console.log('this.id', this.id)
+          if (res.data) {
+            this.caseInfo = res.data
+          }
+        })
+      }
+      
     },
   
     methods: {
