@@ -3,6 +3,16 @@
       <!-- 我是学训宝学院详情页，对应的是无线联盟的案例详情页 -->
           <div class="banner_01">
            <!--<h3>{{ item.name }}</h3>-->
+            <div class="news">
+                <ul>
+                  <li v-for="(item,i) in news" :key="i" @click="detail(item.id)" :class="{'el-icon-arrow-right':true,'active':item.id==activeId}">
+                    <!-- <router-link :to="``">
+                      <span   v-html="ele.content" ></span>                     
+                    </router-link> -->
+                    {{item.name}}
+                  </li>
+                </ul>
+            </div>
           </div>
         <!--</el-carousel-item>-->
       <!--</el-carousel>-->
@@ -13,10 +23,10 @@
       <div class="details">
         <h2>{{caseInfo.title}}</h2>
         <div class="author">作者 :{{caseInfo.author}}</div>
-        <img :src="caseInfo.url" alt="" onerror="onerror=null;src='/static/img/solve5.png'">
+        <img :src="caseInfo.url || '/static/img/solve5.png'" alt="" onerror="onerror=null;src='/static/img/solve5.png'">
         <div class="description" v-html="caseInfo.content">
         </div>
-      </div>
+      </div> 
     </div>
   </template>
   <script>
@@ -32,12 +42,15 @@
     data() {
       return {
         id: this.$route.params.id,
+        newsNum:{},
+        news:[],
         caseInfo: {
           title:'',
           author:'小可爱',
           url:'',
           content:''
-        }
+        },
+        activeId:''
       }
     },
   
@@ -45,17 +58,35 @@
       // 获取详情
       vm.fetch.get('/articles/' + this.id).then(res => {
         console.log('this.id', this.id)
-        console.log('res', res)
+        // console.log('res', res)
         if (res.data) {
           this.caseInfo = res.data
-          console.log(this.caseInfo)
+          // console.log(this.caseInfo)
         }
-        
-        
+      })
+      vm.fetch.get('/classify/findchildren/2').then(res => {
+        // console.log(res,55555)
+        this.news=res
+        vm.fetch.get('/articles/list?type=' + this.news[0].id).then(res => {
+          // console.log(res,7777)
+          // this.news=res
+          this.caseInfo=res.list[0]
+          console.log(this.newsNum,'ooooo')
+        })
       })
     },
   
-    methods: {}
+    methods: {
+      detail(id){
+        this.activeId=id
+        vm.fetch.get('/articles/list?type=' + id).then(res => {
+          console.log(res,7777)
+          // this.news=res
+          this.caseInfo=res.list[0]
+          console.log(this.newsNum,'ooooo')
+      })
+      }
+    }
   }
   </script>
   <style lang="less" scoped>
@@ -135,7 +166,7 @@
     }
   }
   </style>
-  <style lang="less">
+  <style lang="scss">
   .homeCollegeDetail {
     margin-top:80px;
     .el-carousel__item h3 {
@@ -149,10 +180,32 @@
       background-color: #f4f4f4;
     }
     .banner_01 {
-      width: 1920px;
+      width: 1903px;
       height: 400px;
-      background-image: url('/static/img/banner02.jpg');
-      background-size: cover;
+      // background-image: url('/static/img/banner02.jpg');
+      // background-size: cover;
+      
+      .news{
+        width: 1366px;
+        margin: 0 auto;
+        // background: red;
+        height: 400px;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        ul{
+          padding-left: 50px;
+          li{
+            margin-bottom: 20px;
+            display: block;
+            cursor: pointer;
+          }
+          .active{
+            font-size: 20px;
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
   </style>

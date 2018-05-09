@@ -31,6 +31,7 @@ export default {
   created(){
     vm.fetch.get('/classify/findchildren/1').then(res => {
         this.menus=res
+        console.log(res,'pppp')
         this.menus.unshift({
           id: 100,
           name: '首页',
