@@ -3,7 +3,7 @@
     <div class="nav_layout">
       <h1 class="nav_logo" @click="$router.push({path: '/'})">
         <div class="imgBox">
-          树莓后天管理系统
+          树莓后台管理系统
           <!-- <img src="/static/img/logo.png" alt="LOGO"> -->
         </div>
         学训宝
