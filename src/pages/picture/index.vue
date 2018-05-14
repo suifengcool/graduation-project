@@ -43,7 +43,7 @@
           <FormItem  label="图片分类"  prop="type">
             <Select v-model="value" placeholder="请选择" @change='changeSelect(value)'>
               <Option
-                v-for="item in seacheList"
+                v-for="item in titleList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -88,22 +88,20 @@
     data () {
       return {
         changebill: 0,
-        title:'',
+        title:null,
         show:false,
-        data:'',
-        value:'',
-        formOptions: {},
+        value:null,
         list: [{pid: 1, name: '标题图'}, {pid:2, name: 'banner图'}, {pid: 3, name: '首页图'}],
-        seacheList: [{value:1, label: '标题图'}, {value:2, label: 'banner图'}, {value:3, label: '首页图'}],
-        picture:{
+        titleList: [{value:1, label: '标题图'}, {value:2, label: 'banner图'}, {value:3, label: '首页图'}],
+        data:{
           pageNum: 0,
           pageSize:10,
           type: 1,
         },
         formOption:{
-          path:'',
-          type:'',
-          id:'',
+          path:null,
+          type:null,
+          id:null,
         },
         UserInfo:{},
         roles:[]
@@ -120,14 +118,10 @@
       redBill(index) {
         this.changebill = index
         this.data.type =index +1
-        console.log('start:',this.data.type )
         this.getData()
       },
       getData(){
-//        vm.fetch.get(`/pictures/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}&type=${this.data.type}`).then(data=>{
-//          this.data = data
-//        })
-        vm.fetch.get('/pictures/list',this.picture).then(data=>{
+        vm.fetch.get('/pictures/list',{...this.data}).then(data=>{
           this.data = data
         })
       },
@@ -135,7 +129,7 @@
       add(){
         this.show=true
         this.title="新增"
-        this.formOption={path:null,type:null}
+        this.formOption={path:null,type:null,id:null}
       },
       changeSelect(value){
         this.data.type = value
@@ -151,24 +145,14 @@
 //      保存
       save(){
         if(this.title === '编辑'){
-          this.formOptions={
-            path:this.formOption.path,
-            type:this.data.type,
-            id:this.formOption.id,
-          }
-          vm.fetch.put(`/pictures/update`,this.formOptions).then(data => {
+          vm.fetch.put(`/pictures/update`,{...this.formOption}).then(data => {
             this.$message({
               message: '提交成功',
               type: 'success'
             });
           })
         }else if(this.title === '新增'){
-          this.formOptions={
-            path:this.formOption.path,
-            type:this.formOption.type,
-            userId:this.UserInfo.id
-          }
-          vm.fetch.post(`/pictures/add`,this.formOptions).then(data => {
+          vm.fetch.post(`/pictures/add`,{...this.formOption}).then(data => {
             this.$message({
               message: '提交成功',
               type: 'success'
@@ -177,10 +161,6 @@
         }
         this.getData()
         this.show = false
-      },
-
-      close(){
-        this.formOption.path=null
       },
 
 //      删除
@@ -195,7 +175,6 @@
 
       //获取图片
       successFun(data) {
-        console.log('data:',data)
         this.formOption.path=data;
       }
     }
