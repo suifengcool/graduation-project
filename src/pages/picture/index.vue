@@ -1,6 +1,9 @@
 <template>
   <div class='picture'>
     <div class="content-title">图片管理<Button type="primary"  round class="add" @click="add">新增图片</Button></div>
+    <ul class="content_data_title">
+      <li v-for="(item, index) in list" :class="{blue: changebill == index}" @click="redBill(index)" :key="index">{{item.name}}</li>
+    </ul>
     <div class="table_content">
       <Table :data="data.list">
         <TableColumn prop="id" label="图片ID"/>
@@ -10,14 +13,13 @@
           </template>
         </TableColumn>
         <TableColumn prop="path" label="图片的链接" />
-        <TableColumn prop="type" label="图片类型" :formatter="pictureType" />
+        <TableColumn prop="type" label="图片类型" :formatter="pictureType"/>
         <TableColumn label="操作" width="240" fixed="right">
           <template slot-scope="scope">
             <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
             <Button type="danger" plain size="small" @click="del(scope.row)" >删除</Button>
           </template>
         </TableColumn>
-
       </Table>
       <!-- 分页 -->
       <div class="pre_search">
@@ -30,7 +32,7 @@
       </div>
     </div>
     <div class="log">
-      <Dialog :visible.sync="show" :append-to-body="true" class="dialog" :title="title" @close="close">
+      <Dialog :visible.sync="show" :append-to-body="true" class="dialog" :title=title @close="close">
         <Form :model="formOption" label-position="right" label-width="100px">
           <FormItem label="上传图片"  prop="path">
             <div class="img_box">
@@ -51,7 +53,7 @@
         </Form>
         <div slot="footer" class="dialog-footer">
           <Button @click="hide">取消</Button>
-          <Button type="primary" @click="save">确定</Button>
+          <Button type="primary" @click="save">确定修改</Button>
         </div>
       </Dialog >
     </div>
@@ -85,25 +87,23 @@
     },
     data () {
       return {
+        changebill: 0,
         title:'',
         show:false,
-        imgUrl:'',
-        dataList:'',
+        data:'',
         value:'',
+        formOptions: {},
+        list: [{pid: 1, name: '标题图'}, {pid:2, name: 'banner图'}, {pid: 3, name: '首页图'}],
         seacheList: [{value:1, label: '标题图'}, {value:2, label: 'banner图'}, {value:3, label: '首页图'}],
-        data:{
+        picture:{
           pageNum: 0,
           pageSize:10,
-          total: null,
-          list:[],
-          loading: false,
+          type: 1,
         },
         formOption:{
-          name:'',
           path:'',
           type:'',
           id:'',
-          url:''
         },
         UserInfo:{},
         roles:[]
@@ -117,61 +117,69 @@
 
     methods: {
       pictureType,
+      redBill(index) {
+        this.changebill = index
+        this.data.type =index +1
+        console.log('start:',this.data.type )
+        this.getData()
+      },
       getData(){
-        vm.fetch.get(`/pictures/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}`).then(data=>{
+//        vm.fetch.get(`/pictures/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}&type=${this.data.type}`).then(data=>{
+//          this.data = data
+//        })
+        vm.fetch.get('/pictures/list',this.picture).then(data=>{
           this.data = data
-          this.data.pageNum = data.nextPage
-          this.data.total = data.total
-          console.log('this.data:',this.data)
         })
       },
-      // 添加
+      // 新增
       add(){
         this.show=true
         this.title="新增"
-        this.formOption={
-          path:'',
-          type:null,
-          userId:''
-        }
+        this.formOption={path:null,type:null}
       },
       changeSelect(value){
-        this.formOption.type = value
+        this.data.type = value
       },
 
       // 编辑
       edit(row){
         this.show=true
         this.title="编辑"
-        this.formOption={
-          path:row.path,
-          type:row.type,
-          id:row.id
-        }
+        row.type = this.value
+        console.log(this.value)
       },
 //      保存
-      save(row){
-        this.show = false
-
+      save(){
         if(this.title === '编辑'){
-          vm.fetch.post(`/pictures/update`,this.formOption).then(data => {
-            if(data){
-            }
+          this.formOptions={
+            path:this.formOption.path,
+            type:this.data.type,
+            id:this.formOption.id,
+          }
+          vm.fetch.put(`/pictures/update`,this.formOptions).then(data => {
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
           })
         }else if(this.title === '新增'){
-          this.formOption={
-            path:this.formOption.url,
+          this.formOptions={
+            path:this.formOption.path,
             type:this.formOption.type,
             userId:this.UserInfo.id
           }
-          vm.fetch.post(`/pictures/add`,this.formOption).then(data => {
+          vm.fetch.post(`/pictures/add`,this.formOptions).then(data => {
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
           })
         }
         this.getData()
+        this.show = false
       },
 
       close(){
-        console.log('this.formOption:',this.formOption)
         this.formOption.path=null
       },
 
@@ -195,10 +203,33 @@
 </script>
 <style lang="less">
   .picture{
+
     .content-title{
       .add{
         position: relative;
         /*right:-75%;*/
+      }
+    }
+    .content_data_title{
+      height:70px;
+      line-height: 70px;
+      background-color: #fff;
+      margin-bottom: 20px;
+      padding-left: 30px;
+      font-size: 20px;
+      // color: #51c5ff;
+      li{
+        float: left;
+        margin: 0 17px;
+        color:#495869;
+        cursor :pointer;
+        &.ExportButton{
+          float: right;
+        }
+      }
+      .blue{
+        color: #51c5ff;
+        border-bottom: 3px solid #51c5ff;
       }
     }
     .table_content{
