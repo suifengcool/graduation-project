@@ -271,6 +271,10 @@ export default {
     }
   }
   .user{
+      .el-pagination{
+         background-color: #fff; 
+         padding:20px;
+      }
       .table_content{
        text-align: center;
        .img_box{

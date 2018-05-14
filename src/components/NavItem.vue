@@ -23,6 +23,10 @@ export default {
   },
   methods: {
     select({ index }) {
+      // console.log(this.item,666)
+      if (this.item.id!=100 || this.item.id!=101) {
+        this.$router.push({ path: '/home/detail/'+this.item.id,query:{id:this.item.id}})
+      }
       if (index) {
         this.$router.push({ path: index })
       }

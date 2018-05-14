@@ -3,7 +3,7 @@
     <div class="logo">
       <div class="imgBox">
         <!-- <img src="../../../static/img/logo_xxb.png" alt="LOGO" @click="goHome"> -->
-        <h3>毕业设计</h3>
+        <h3>后台管理系统</h3>
       </div>
       <StartHereRight :data="data"/>
     </div>

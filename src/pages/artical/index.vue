@@ -13,7 +13,7 @@
                 </TableColumn>
                 <TableColumn prop="createTime" label="创建时间"/>           
                 <TableColumn prop="updateTime" label="更新时间"/>           
-                <TableColumn prop="auth" label="发布人"/>           
+                <TableColumn prop="user" label="发布人"/>           
                 <TableColumn label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                         <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>

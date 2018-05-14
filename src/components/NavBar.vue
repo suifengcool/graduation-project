@@ -3,7 +3,7 @@
     <div class="nav_layout">
       <h1 class="nav_logo" @click="$router.push({path: '/'})">
         <div class="imgBox">
-          树莓后天管理系统
+          树莓后台管理系统
           <!-- <img src="/static/img/logo.png" alt="LOGO"> -->
         </div>
         学训宝
@@ -31,6 +31,7 @@ export default {
   created(){
     vm.fetch.get('/classify/findchildren/1').then(res => {
         this.menus=res
+        console.log(res,'pppp')
         this.menus.unshift({
           id: 100,
           name: '首页',
