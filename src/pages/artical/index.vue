@@ -146,7 +146,7 @@ export default {
             this.options2.forEach((item,index)=>{
                  console.log("结果",this.options2);
                 if ( !this.options2[index].cities.length) {
-                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                    vm.fetch.get(`/classify/findchildren/${item.ids}`).then(result=>{
 
                         // result
                         console.log("数据",result);
@@ -161,20 +161,20 @@ export default {
                                 label: element.name,
                                 // cities: []
                             }
-                            if (element.id) {
-                                vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                                    obj.cities = []
-                                    result.forEach(itm=>{
-                                        var objs = {
-                                            id: element.id,
-                                            value: element.id,
-                                            label: element.name,
-                                            // cities: []
-                                        }
-                                        obj.cities.push(objs)
-                                    })
-                                })
-                            }
+                            // if (element.id) {
+                            //     vm.fetch.get(`/classify/findchildren/${item.ids}`).then(resultl=>{
+                            //         obj.cities = []
+                            //         resultl.forEach(itm=>{
+                            //             var objs = {
+                            //                 id: element.id,
+                            //                 value: element.id,
+                            //                 label: element.name,
+                            //                 // cities: []
+                            //             }
+                            //             obj.cities.push(objs)
+                            //         })
+                            //     })
+                            // }
                             this.options2[index].cities.push(obj)
                         });
                         console.log("结果",this.options2);
