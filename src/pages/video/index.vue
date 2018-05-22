@@ -184,20 +184,6 @@ export default {
                                 label: element.name,
                                 // cities: []
                             }
-                            // if (element.id) {
-                            //     vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                            //         obj.cities = []
-                            //         result.forEach(itm=>{
-                            //             var objs = {
-                            //                 id: element.id,
-                            //                 value: element.id,
-                            //                 label: element.name,
-                            //                 // cities: []
-                            //             }
-                            //             obj.cities.push(objs)
-                            //         })
-                            //     })
-                            // }
                             this.options2[index].cities.push(obj)
                         });
                         console.log("结果",this.options2);

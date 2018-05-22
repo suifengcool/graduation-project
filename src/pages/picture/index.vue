@@ -163,7 +163,7 @@
       save(){
         if(this.title === '编辑'){
           this.formOption.type = this.value
-          vm.fetch.put(`/pictures/update`,{...this.formOption}).then(data => {
+          vm.fetch.put(`/pictures/update`,{...this.formOption,userId: this.UserInfo.id}).then(data => {
             this.$message({
               message: '编辑成功',
               type: 'success'
@@ -171,7 +171,7 @@
           })
         }else if(this.title === '新增'){
           this.formOption.type = this.value
-          vm.fetch.post(`/pictures/add`,{...this.formOption}).then(data => {
+          vm.fetch.post(`/pictures/add`,{...this.formOption,userId: this.UserInfo.id}).then(data => {
             this.$message({
               message: '新增成功',
               type: 'success'
