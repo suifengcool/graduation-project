@@ -53,7 +53,7 @@
         </Form>
         <div slot="footer" class="dialog-footer">
           <Button @click="hide">取消</Button>
-          <Button type="primary" @click="save">确定修改</Button>
+          <Button type="primary" @click="save">确定</Button>
         </div>
       </Dialog >
     </div>
@@ -91,12 +91,12 @@
         title:null,
         show:false,
         value:null,
-        list: [{pid: 1, name: '标题图'}, {pid:2, name: 'banner图'}, {pid: 3, name: '首页图'}],
-        titleList: [{value:1, label: '标题图'}, {value:2, label: 'banner图'}, {value:3, label: '首页图'}],
+        list: [{pid: 0, name: '标题图'}, {pid:1, name: 'banner图'}, {pid: 2, name: '首页图'}],
+        titleList: [{value:0, label: '标题图'}, {value:1, label: 'banner图'}, {value:2, label: '首页图'}],
         data:{
           pageNum: 0,
           pageSize:10,
-          type: 1,
+          type: 0,
         },
         formOption:{
           path:null,
@@ -115,13 +115,28 @@
 
     methods: {
       pictureType,
+      close() {
+        this.formOption = {
+          path:null,
+          type:null,
+          id:null,
+        }
+      },
       redBill(index) {
         this.changebill = index
-        this.data.type =index +1
+        this.data.type =index 
+        console.log(1111);
+        
         this.getData()
       },
       getData(){
-        vm.fetch.get('/pictures/list',{...this.data}).then(data=>{
+        var obj = {
+          page:　this.data.pageNum,
+          pageSize:　this.data.page,
+          type: this.data.type,
+        }
+        this.data.type = this.data.type ? this.data.type : this.changebill
+        vm.fetch.get(`/pictures/list?page=${this.data.pageNum}&pageSize=${this.data.pageSize}&type=${this.data.type}`,).then(data=>{
           this.data = data
         })
       },
@@ -139,22 +154,26 @@
       edit(row){
         this.show=true
         this.title="编辑"
-        row.type = this.value
-        console.log(this.value)
+        this.value = Math.abs(row.type)
+        this.formOption = {...row}
+        // this.formOption.type = Math.abs(row.type)
+        console.log(row)
       },
 //      保存
       save(){
         if(this.title === '编辑'){
+          this.formOption.type = this.value
           vm.fetch.put(`/pictures/update`,{...this.formOption}).then(data => {
             this.$message({
-              message: '提交成功',
+              message: '编辑成功',
               type: 'success'
             });
           })
         }else if(this.title === '新增'){
+          this.formOption.type = this.value
           vm.fetch.post(`/pictures/add`,{...this.formOption}).then(data => {
             this.$message({
-              message: '提交成功',
+              message: '新增成功',
               type: 'success'
             });
           })

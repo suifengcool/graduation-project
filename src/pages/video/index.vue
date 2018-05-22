@@ -5,8 +5,7 @@
         <Table :data="data.list">
           <TableColumn prop="name" label="视频名称"/>
           <TableColumn prop="videoUrl" label="视频地址" />
-          <TableColumn prop="createTime" label="创建时间"/>
-          <TableColumn prop="updateTime" label="创建时间"/>                
+          <TableColumn prop="createTime" label="创建时间"/>               
           <TableColumn label="操作" width="240" fixed="right">
             <template slot-scope="scope">
               <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
@@ -185,20 +184,20 @@ export default {
                                 label: element.name,
                                 // cities: []
                             }
-                            if (element.id) {
-                                vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
-                                    obj.cities = []
-                                    result.forEach(itm=>{
-                                        var objs = {
-                                            id: element.id,
-                                            value: element.id,
-                                            label: element.name,
-                                            // cities: []
-                                        }
-                                        obj.cities.push(objs)
-                                    })
-                                })
-                            }
+                            // if (element.id) {
+                            //     vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+                            //         obj.cities = []
+                            //         result.forEach(itm=>{
+                            //             var objs = {
+                            //                 id: element.id,
+                            //                 value: element.id,
+                            //                 label: element.name,
+                            //                 // cities: []
+                            //             }
+                            //             obj.cities.push(objs)
+                            //         })
+                            //     })
+                            // }
                             this.options2[index].cities.push(obj)
                         });
                         console.log("结果",this.options2);
