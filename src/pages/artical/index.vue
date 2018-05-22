@@ -347,7 +347,11 @@ export default {
             console.log("获取");
             console.log();
             
-            vm.fetch.get(`/articles/list?page=${pagedata?pagedata.page:this.data.pageNum}&pageSize=${pagedata?pagedata.pageSize:10}`).then(data=>{
+            vm.fetch.post(`/articles/list`,{
+                page: pagedata?pagedata.page:this.data.pageNum,
+                pageSize:　pagedata?pagedata.pageSize:10,
+                type:null
+            }).then(data=>{
                 this.dataList = data.list
                 this.data.pageNum = data.pageNum
                 this.data.total = data.total
