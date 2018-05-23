@@ -3,6 +3,7 @@
 let config = [
     '/home/index',                     // 首页
     '/home/detail/:id',                // 详情页
+    '/home/video',                // 详情页
 ]
 
 let config1 = [

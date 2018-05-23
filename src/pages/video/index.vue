@@ -294,7 +294,10 @@ export default {
           }
      },
      getData(pagedata){
-        vm.fetch.get(`/video/list?page=${pagedata?pagedata.page:this.data.pageNum}&pageSize=${pagedata?pagedata.pageSize:10}`).then(data=>{
+        vm.fetch.post(`/video/list`,{
+          page:　pagedata?pagedata.page:this.data.pageNum,
+          pageSize:　10
+        }).then(data=>{
           this.data.list = data.list
           this.data.pageNum = data.pageNum
           this.data.pageSize = data.pageSize

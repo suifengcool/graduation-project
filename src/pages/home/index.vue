@@ -17,12 +17,12 @@
                   </div>
                 </header>
                 <Row :gutter="40">
-                  <Col :span="12"><div class="solve_img"><img :src="'/static/img/solve0.png'" alt=""></div></Col>
+                  <Col :span="12"><div class="solve_img"><img :src="dataList.solveImg[index]" alt=""></div></Col>
                   <Col :span="12">
                     <div class="solution_detail">
                       <ul class="detail">
                         <li v-for="(ele,idx) in item.list" :key="idx">
-                          <router-link :to="`/home/detail/${idx}`">
+                          <router-link :to="`/home/detail/${ele.id}`">
                             <span   v-html="ele.content" ></span>                     
                           </router-link>
                         </li>
@@ -59,30 +59,48 @@
         dataList: [{
           id: null,
           name: '',
-          list: []
+          list: [],
+          solveImg: []
         }],
         carousel: {
           list: []
         },
+        // solveImg: []
       }
     },
 
     created() {
       //获取轮播图
-      vm.fetch.get('pictures/list').then(res => {
+      vm.fetch.get('pictures/list?type=1').then(res => {
         this.carousel.list = res.list
       })
+      
 
       this.dataList = []
       // 获取分类接口
       vm.fetch.get('/classify/findchildren/2').then(res => {
+        
         res.forEach((item, index) => {
           let obj = {}
           obj.id = item.id
           obj.name = item.name
-          vm.fetch.get('/articles/list?type=' + item.id).then(res => {
+           console.log(222,item);
+          vm.fetch.post('/articles/list',{
+            type: obj.id,
+            page: 1,
+            pageSize: 10
+          }).then(res => {
             obj.list = res.list
+            console.log(111,obj);
+            
             this.dataList.push(obj)
+          })
+          //获取首页图
+          vm.fetch.get('pictures/list?type=2').then(res => {
+            this.dataList.solveImg = res.list.map(item=>{
+              return item.path
+            })
+            this.dataList.solveImg 
           })
         })
 

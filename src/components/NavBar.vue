@@ -40,7 +40,7 @@ export default {
         this.menus.push({
           id: 101,
           name: '视频中心',
-          url:'/home/detail/1000'
+          url:'/home/video'
         })
         this.menus.push({
           id: 101,

@@ -3,17 +3,18 @@
       <!-- 我是学训宝学院详情页，对应的是无线联盟的案例详情页 -->
           <div class="banner_01">
            <!--<h3>{{ item.name }}</h3>-->
-            <div class="news" >
-                <ul >
-                  <li v-for="(item,i) in news" :key="i" @click="detail(item.id)" :class="{'el-icon-arrow-right':true,'active':item.id==activeId}">
+          
+            <div>
+              <ul class="videpaly">
+                  <li v-for="(item,i) in videList"  >
                     <!-- <router-link :to="``">
                       <span   v-html="ele.content" ></span>                     
                     </router-link> -->
-                    {{item.name}}
+                    <!-- {{item.name}} -->
+                    <video :src="item.videoUrl" controls="controls" ></video>
                   </li>
                 </ul>
             </div>
-           
             
           </div>
         <!--</el-carousel-item>-->
@@ -22,13 +23,7 @@
       <div class='backward' @click="$router.go(-1)">
         <i class="el-icon-arrow-left"></i><span>返回上一级</span>
       </div>
-      <div class="details" v-if="videList.length==0">
-        <h2>{{caseInfo.title}}</h2>
-        <div class="author">作者 :{{caseInfo.author}}</div>
-        <!-- <img :src="caseInfo.url || '/static/img/solve5.png'" alt="" onerror="onerror=null;src='/static/img/solve5.png'"> -->
-        <div class="description" v-html="caseInfo.content">
-        </div>
-      </div> 
+      
     </div>
   </template>
   <script>
@@ -60,28 +55,20 @@ export default {
 
   created() {
     // 获取详情
-    if (this.flag) {
-      console.log(666666);
-      
-      this.videList = []
-      console.log(666666,this.videList);
-      vm.fetch.get("/classify/getLevel/" + this.id).then(res => {
-        this.news = res;
-        
-        vm.fetch.get("/classify/findchildren/" + this.news[0].id).then(res => {
-          this.caseInfo = res.list[0];
-        });
-      });
-    } else {
-          vm.fetch.get("/articles/" + this.$route.params.id).then(res => {
-            console.log("this.id", this.$route.params.id);
-            this.videList = []
-            if (res.data) {
-              this.caseInfo = res.data;
-            }
+   
+        vm.fetch.post("/video/list",{
+          page: 1,
+          pageSize:10
+        }).then(res => {
+            // console.log("this.id", this.$route.params.id);
+            console.log("视频",res);
+            
+              this.videList = res.list;
+              console.log("视频",this.videList);
           });
+
       
-    }
+    
   },
 
   methods: {
@@ -99,60 +86,7 @@ export default {
       });
     }
   },
-  watch: {
-    $route(to, from) {
-   console.log(to,from)
-       if (this.flag) {
-         this.caseInfo = {
-          title: "",
-          author: "小可爱",
-          url: "",
-          content: ""
-        }
-        vm.fetch.post("/video/list",{
-          page: 1,
-          pageSize:10
-        }).then(res => {
-            // console.log("this.id", this.$route.params.id);
-            console.log("视频",res);
-            
-              this.videList = res.list;
-              console.log("视频",this.videList);
-          });
-    } else {
-      if (this.$route.params.id == 1000) {
-        this.caseInfo = {
-          title: "",
-          author: "小可爱",
-          url: "",
-          content: ""
-        }
-          vm.fetch.post("/video/list",{
-            page: 1,
-            pageSize:10
-          }).then(res => {
-            // console.log("this.id", this.$route.params.id);
-            console.log("视频",res);
-              if (res.lenght >1) {
-                this.videList = res.list;
-              }
-          });
-      }else {
-        console.log(2222);
-        
-          vm.fetch.get("/articles/" + this.$route.params.id).then(res => {
-            console.log("this.id", this.$route.params.id);
-            this.videList = []
-            if (res.data) {
-              this.caseInfo = res.data;
-              
-            }
-          });
-      }
-      
-    }
-    }
-  }
+
 };
 </script>
   <style lang="less" scoped>
