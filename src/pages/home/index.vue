@@ -193,51 +193,38 @@
           height: 100%;
         }
       }
-      .solution_detail {
-        .detail {
-          font-family: MicrosoftYaHei;
-          font-size: 16px;
-          font-weight: normal;
-          font-stretch: normal;
-          line-height: 24px;
-          letter-spacing: 0px;
-          color: #333333; // margin-bottom: 40px;
-          li {
-            text-indent: 2em;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            &:before {
-              content: '';
-              display: inline-block;
-              height: 5px;
-              width: 5px;
-              position: absolute;
-              left: 10px;
-              top: 10px;
-              background-color: #51afc9;
-              border-radius: 50%;
-            }
-          }
-        }
-        h4 {
-          font-family: MicrosoftYaHei;
-          font-size: 20px;
-          letter-spacing: 0px;
-          color: #333333;
-          margin-bottom: 15px;
-        }
-        p {
-          font-family: MicrosoftYaHei;
-          font-size: 16px;
-          line-height: 30px;
-          letter-spacing: 0px;
-          color: #999999;
-        }
-      }
+      
     }
   }
 
 </style>
+<style lang="less">
+.home-index {
+  .solution_detail {
+        .detail {
+          li{ display:list-item;
+          padding: 10px; }
+          li:nth-child(1) {
+              // background-color: blue;
+                overflow: hidden;
+
+                text-overflow: ellipsis;
+
+                white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+                span {
+                    p:nth-child(n+2){
+                        display: none;
+                    }
+                    p:nth-child(1) {
+                        &>*:nth-child(n+2){
+                            display: none;
+                        }
+                    }
+
+                }
+          }
+        }
+      }
+}
+</style>
+

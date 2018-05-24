@@ -361,6 +361,27 @@ export default {
 	}
 }
 </script>
-<style lang='sass' scoped>
+<style lang='less' >
+.artical {
+    .table_content tr td:nth-child(3) .cell{
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+        span {
+            p:nth-child(n+2){
+                display: none;
+            }
+            p:nth-child(1) {
+                &>*:nth-child(n+2){
+                    display: none;
+                }
+            }
+
+        }
+        // background-color: blue;
+    }
+}
 
 </style>
