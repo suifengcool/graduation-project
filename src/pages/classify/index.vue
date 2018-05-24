@@ -104,8 +104,8 @@ export default {
         console.log(val)
       },
       init(){
-        vm.fetch.get("/classify/list?page=1&pageSize=10").then(res => {
-          this.options=res.list;
+        vm.fetch.get("/classify/findchildren/0").then(res => {
+          this.options=res;
           console.log(res);
         })
       },

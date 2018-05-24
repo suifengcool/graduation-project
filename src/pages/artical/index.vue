@@ -155,26 +155,33 @@ export default {
                         }
                         // this.options2[index].cities = []
                         result.forEach(element => {
-                            var obj = {
+                            let obj = {
                                 id: element.id,
                                 value: element.id,
                                 label: element.name,
                                 // cities: []
                             }
-                            // if (element.id) {
-                            //     vm.fetch.get(`/classify/findchildren/${item.ids}`).then(resultl=>{
-                            //         obj.cities = []
-                            //         resultl.forEach(itm=>{
-                            //             var objs = {
-                            //                 id: element.id,
-                            //                 value: element.id,
-                            //                 label: element.name,
-                            //                 // cities: []
-                            //             }
-                            //             obj.cities.push(objs)
-                            //         })
-                            //     })
-                            // }
+                            console.log(999,element);
+                            let uid = element.id
+                            if (element.id) {
+                                vm.fetch.get(`/classify/findchildren/${uid}`).then(resultl=>{
+                                    
+                                    resultl.forEach(itm=>{
+                                        let objs = {
+                                            id: element.id,
+                                            value: element.id,
+                                            label: element.name,
+                                            // cities: []
+                                        }
+                                      
+                                        obj.cities.push(objs)
+                                    })
+                                    if (resultl.length <= 0) {
+                                        // obj.cities = [] 
+                                        delete obj.cities
+                                    }
+                                })
+                            }
                             this.options2[index].cities.push(obj)
                         });
                         console.log("结果",this.options2);
