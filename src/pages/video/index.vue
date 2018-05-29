@@ -5,7 +5,7 @@
         <Table :data="data.list">
           <TableColumn prop="name" label="视频名称"/>
           <TableColumn prop="videoUrl" label="视频地址" />
-          <TableColumn prop="createTime" label="创建时间"/>               
+          <TableColumn prop="createTime" label="创建时间"/>
           <TableColumn label="操作" width="240" fixed="right">
             <template slot-scope="scope">
               <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
@@ -19,22 +19,22 @@
             <FormItem label="视频名称"  prop="name">
               <Input v-model="formOption.name"/>
             </FormItem>
-            <FormItem label="分类">
-              <Cascader
-                      :options="options2"
-                      @active-item-change="handleItemChange"
-                      v-model="formOption.classifyId"
-                      :props="props">
-              </Cascader>
+           <FormItem label="分类" prop="classifyId">
+                                  <Cascader
+                                      :options="options2"
+                                      @active-item-change="handleItemChange"
+                                      :props="props"
+                                      v-model="formOption.classifyId"
+                                  ></Cascader>
             </FormItem>
             <FormItem label="上传视频">
               <Col :span="24">
                 <div class="uploadimgShow">
-                  <UploadFile :defaultPic="formOption.videoUrl || ''" method="success2" width='100%' height="180" @success2="successIdCardBack2" ref="videPload"></UploadFile>
+                  <UploadFile :defaultPic="formOption.videoUrl" method="success2" width='100%' height="180" @success2="successIdCardBack2" ref="videPload"></UploadFile>
                 </div>
               </Col>
-            </FormItem>                
-          </Form> 
+            </FormItem>
+          </Form>
           <div slot="footer" class="dialog-footer">
           <Button @click="dialogFormVisible = false">取消</Button>
           <Button type="primary" @click="save">确定</Button>
@@ -43,18 +43,18 @@
 
         <!-- 分页 -->
         <div class="pre_search">
-            <MyPagination 
-                :page="data.pageNum" 
-                :pageSize="data.pageSize" 
-                :pageSizes="[10]" 
-                :total="data.total" 
+            <MyPagination
+                :page="data.pageNum"
+                :pageSize="data.pageSize"
+                :pageSizes="[10]"
+                :total="data.total"
                 :method='getData' />
         </div>
     </div>
 </template>
 
 <script>
-import { 
+import {
   Button,
   Carousel,
   CarouselItem,
@@ -72,7 +72,7 @@ import {
   Select,
   Option,
   Cascader,
-  MessageBox 
+  MessageBox
   } from 'element-ui';
 import MyPagination from '../../components/MyPagination.vue'
 import UploadFile from '../../components/UploadFile.vue'
@@ -98,7 +98,7 @@ export default {
       Option,
       UploadFile,
       Cascader,
-      MessageBox 
+      MessageBox
     },
     data () {
 		return {
@@ -118,11 +118,11 @@ export default {
         pageNum:1,
         pageSize:10,
         total:null,
-        list:[],  
+        list:[],
       },
       formOption: {
         acount: '',
-        videoUrl: '' 
+        videoUrl: ''
       },
       dialogFormVisible: false,
       value: '',
@@ -142,68 +142,96 @@ export default {
 		}
     },
 
-    created () {
-        vm.config.title("视频管理");
-          vm.fetch.get('/classify/findchildren/0').then(result=>{
-            // result
-            console.log("数据",result);
-            result.forEach(element => {
-                if (element.type == 1) {
-                    var obj = {
-                        ids: element.id,
-                        value: element.id,
-                        label: element.name,
-                        cities: []
-                    }
-                }else{
-                    var obj = {
-                        ids: element.id,
-                        value: element.id,
-                        label: element.name,
-                        cities: []
-                    }
-                }
-                this.options2.push(obj)
-            });
-            console.log("结果",this.options2);
-            this.options2.forEach((item,index)=>{
-                 console.log("结果",this.options2);
-                if ( !this.options2[index].cities.length) {
-                    vm.fetch.get(`/classify/getLevel/${item.ids}`).then(result=>{
+     created () {
+           // /classify/findchildren/{id}
+           this.$confirm = MessageBox.confirm
+           // /{id}findchildren/{id}
+           vm.fetch.get('/classify/findchildren/0').then(result=>{
+               // result
+               console.log("数据",result);
+               result.forEach(element => {
+                   if (element.type == 1) {
+                       var obj = {
+                           ids: element.id,
+                           value: element.id,
+                           label: element.name,
+                           cities: []
+                       }
+                   }else{
+                       var obj = {
+                           ids: element.id,
+                           value: element.id,
+                           label: element.name,
+                           cities: []
+                       }
+                   }
+                   this.options2.push(obj)
+               });
+               console.log("结果",this.options2);
+               this.options2.forEach((item,index)=>{
+                    console.log("结果",this.options2);
+                   if ( !this.options2[index].cities.length) {
+                       vm.fetch.get(`/classify/findchildren/${item.ids}`).then(result=>{
 
-                        // result
-                        console.log("数据",result);
-                        if (result.length<=0) {
-                            return
-                        }
-                        // this.options2[index].cities = []
-                        result.forEach(element => {
-                            var obj = {
-                                id: element.id,
-                                value: element.id,
-                                label: element.name,
-                                // cities: []
-                            }
-                            this.options2[index].cities.push(obj)
-                        });
-                        console.log("结果",this.options2);
-                    })
-                } 
-            })
-            
-        })
-    },
+                           // result
+                           console.log("数据",result);
+                           if (result.length<=0) {
+                               return
+                           }
+                           // this.options2[index].cities = []
+                           result.forEach(element => {
+                               let obj = {
+                                   id: element.id,
+                                   value: element.id,
+                                   label: element.name,
+                                   // cities: []
+                               }
+                               console.log(999,element);
+                               let uid = element.id
+                               if (element.id) {
+                                   vm.fetch.get(`/classify/findchildren/${uid}`).then(resultl=>{
 
+                                       resultl.forEach(itm=>{
+                                           let objs = {
+                                               id: element.id,
+                                               value: element.id,
+                                               label: element.name,
+                                               // cities: []
+                                           }
+
+                                           obj.cities.push(objs)
+                                       })
+                                       if (resultl.length <= 0) {
+                                           // obj.cities = []
+                                           delete obj.cities
+                                       }
+                                   })
+                               }
+                               this.options2[index].cities.push(obj)
+                           });
+                           console.log("结果",this.options2);
+                       })
+                   }
+               })
+
+           })
+           this.formOption.classifyId = null
+           // this.userId = localStorage.getData
+           var userInfo= JSON.parse(localStorage.getItem('userInfo'));
+           console.log(66666666666666,userInfo);
+
+           this.userId = userInfo.id
+       },
     methods: {
 
       handleItemChange(val) {
            console.log('active item:', val);
-           
+
 
       },
       // 新建
       newput(){
-        this.dialogFormVisible = true 
+        this.dialogFormVisible = true
         this.title = '新建'
         console.log(this.title)
          this.formOption = {}
@@ -214,11 +242,11 @@ export default {
         console.log(
           this.$refs.videPload
         );
-        
-        // this.$refs.videUpload.$emit('clearUrl') 
+
+        // this.$refs.videUpload.$emit('clearUrl')
       },
       edit(data) {
-        this.dialogFormVisible = true 
+        this.dialogFormVisible = true
         this.title = '编辑'
         this.formOption = {}
         this.formOption.classifyId = []
@@ -228,7 +256,7 @@ export default {
             }
         },
      save() {
-          this.dialogFormVisible = false 
+          this.dialogFormVisible = false
           console.log(this.title)
           console.log('data',JSON.parse(window.localStorage.getItem('userInfo')))
           let user = JSON.parse(window.localStorage.getItem('userInfo')).id
@@ -259,7 +287,7 @@ export default {
                         }
                       })
                 })
-                
+
               }
             })
           }
@@ -272,7 +300,7 @@ export default {
                       result.list.forEach(item=>{
                         if (item.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
                             vm.fetch.put(`video/update`,{name:this.formOption.name, videoUrl:this.formOption.videoUrl, userId:user,id:this.formOption.id,createTime:this.formOption.createTime,updateTime:null,}).then(res=>{
-                        
+
                                 if(res && res.resultCode == 200){
                                   console.log(99999999999999999);
                                   vm.$message({
@@ -288,7 +316,7 @@ export default {
                         }
                       })
                 })
-                
+
               }
             })
           }
@@ -302,7 +330,7 @@ export default {
           this.data.pageNum = data.pageNum
           this.data.pageSize = data.pageSize
           this.data.total = data.total
-        
+
       })
      },
      successIdCardBack2(val) {
@@ -336,7 +364,7 @@ export default {
       justify-content: space-between
       padding-right: 26px
       align-items: center
-    .time_search 
+    .time_search
       height: 74px
       line-height: 74px
       background-color: #fff
@@ -364,13 +392,13 @@ export default {
         height: 46px;
     .el-input__inner
       border-radius: 20px !important;
-  .block 
+  .block
     margin-left: 40px
     .el-date-editor
       width: 400px
       height: 46px
       border-radius: 20px
-      .el-range-input 
+      .el-range-input
         font-size: 16px
     .el-range-separator
       width: 10%
@@ -378,11 +406,11 @@ export default {
       font-size: 16px
       margin-left: 10px !important
   .offlind_card
-    .row-bg 
-      .el-card__body 
+    .row-bg
+      .el-card__body
         padding: 0 12px 20px
 .dialogone
-  width: 600px !important;  
+  width: 600px !important;
 </style>
 
 

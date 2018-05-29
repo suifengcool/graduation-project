@@ -1,5 +1,5 @@
 <template>
-    <div class='artical'>
+    <div class='article'>
         <div class="content-title">文章管理<Button type="primary"  round class="add" @click="edit()">新增文章</Button></div>
 
         <div class="table_content" style="background:#fff;padding-bottom:20px">
@@ -11,9 +11,9 @@
                         <span v-html="scope.row.content"></span>
                     </template>
                 </TableColumn>
-                <TableColumn prop="createTime" label="创建时间"/>           
-                <TableColumn prop="updateTime" label="更新时间"/>           
-                <TableColumn prop="user" label="发布人"/>           
+                <TableColumn prop="createTime" label="创建时间"/>
+                <TableColumn prop="updateTime" label="更新时间"/>
+                <TableColumn prop="user" label="发布人"/>
                 <TableColumn label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                         <Button type="primary" plain size="small" @click="edit(scope.row)">编辑</Button>
@@ -23,11 +23,11 @@
             </Table>
             <!-- 分页 -->
             <div class="pre_search" style="background:#fff;padding:20px">
-                <MyPagination 
-                    :page="data.pageNum" 
-                    :pageSize="data.pageSize" 
-                    :pageSizes="[10]" 
-                    :total="data.total" 
+                <MyPagination
+                    :page="data.pageNum"
+                    :pageSize="data.pageSize"
+                    :pageSizes="[10]"
+                    :total="data.total"
                     :method='getData' />
             </div>
         </div>
@@ -45,11 +45,11 @@
                             :props="props"
                             v-model="formOption.classifyId"
                         ></Cascader>
-                    </FormItem>  
+                    </FormItem>
                     <FormItem label="文章内容" prop="content">
                         <vue-editor v-model="formOption.content" useCustomImageHandler @imageAdded="handleImageAdded"></vue-editor>
-                    </FormItem>                
-                </Form> 
+                    </FormItem>
+                </Form>
                 <div slot="footer" class="dialog-footer">
                     <Button @click="dialogFormVisible=false">取消</Button>
                     <Button type="primary" @click="save">确定</Button>
@@ -57,7 +57,7 @@
             </Dialog >
         </div>
 
-        
+
     </div>
 </template>
 
@@ -69,7 +69,7 @@ import md5 from 'md5'
 import moment from 'moment'
 
 export default {
-    name: 'artical',
+    name: 'article',
     components: {
     	Button,
         VueEditor,
@@ -165,7 +165,7 @@ export default {
                             let uid = element.id
                             if (element.id) {
                                 vm.fetch.get(`/classify/findchildren/${uid}`).then(resultl=>{
-                                    
+
                                     resultl.forEach(itm=>{
                                         let objs = {
                                             id: element.id,
@@ -173,11 +173,11 @@ export default {
                                             label: element.name,
                                             // cities: []
                                         }
-                                      
+
                                         obj.cities.push(objs)
                                     })
                                     if (resultl.length <= 0) {
-                                        // obj.cities = [] 
+                                        // obj.cities = []
                                         delete obj.cities
                                     }
                                 })
@@ -186,15 +186,15 @@ export default {
                         });
                         console.log("结果",this.options2);
                     })
-                } 
+                }
             })
-            
+
         })
         this.formOption.classifyId = null
         // this.userId = localStorage.getData
         var userInfo= JSON.parse(localStorage.getItem('userInfo'));
         console.log(66666666666666,userInfo);
-        
+
         this.userId = userInfo.id
     },
 
@@ -210,10 +210,10 @@ export default {
         },
         edit(data){
             console.log(data);
-            
+
             this.modalType = data ? 1 : 0
             this.dialogFormVisible = true
-            
+
             if (data) {
                 this.formOption = {...data,classifyId:[]}
             }else{
@@ -223,7 +223,7 @@ export default {
 
 
         },
-        
+
         del(id,index){
             var that =this
             this.$confirm(`确认删除?`, '提示', '取消确认')
@@ -240,7 +240,7 @@ export default {
                         })
                         this.getData()
                     }
-                    
+
                 })
                 .catch(({ msg }) => {
                     vm.$message({
@@ -255,7 +255,7 @@ export default {
         save(){
             // if(this.modalType){
 
-            // }        
+            // }
                         console.log("分类",this.formOption.classifyId);
                         vm.fetch.get(`/classify/list`)
                         .then(res=>{
@@ -263,7 +263,7 @@ export default {
                             res.list.forEach(it=>{
                                 if (it.name == this.formOption.classifyId[this.formOption.classifyId.length-1]) {
                                     // console.log();
-                                    
+
                                     if (this.modalType == 1) {
                                         // this.formOption = data
                                         vm.fetch.put(`/articles/update`,{content:this.formOption.content,
@@ -280,12 +280,12 @@ export default {
                                                 this.dialogFormVisible = false
                                                 this.formOption = {}
                                                 this.getData()
-                                                
+
                                             }
                                         })
                                     }else{
                                         console.log(33333333);
-                                        
+
                                         vm.fetch.post(`/articles/add`,{...this.formOption,classifyId:it.id,userId:this.userId})
                                         .then(res=>{
                                             if(res && res.resultCode === 200){
@@ -302,10 +302,10 @@ export default {
                                     }
                                 }
                             })
-                            
+
                         })
                         // this.formOption.classifyId = 3
-                        
+
         },
 
         handleItemChange(val) {
@@ -328,8 +328,8 @@ export default {
             //         }
             //     })
             // })
-            
-            
+
+
         },
         changdeclassify(e) {
             console.log(e);
@@ -344,7 +344,7 @@ export default {
                 const UPLOAD_URL = location.protocol === 'https:' ? 'https://up.qbox.me' : 'http://up-z0.qiniu.com'
                 vm.fetch.post(UPLOAD_URL, formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(result=>{
                     if(result){
-                        let url = token.path + result.key 
+                        let url = token.path + result.key
                         Editor.insertEmbed(cursorLocation, 'image', url);
                     }
                 })
@@ -353,7 +353,7 @@ export default {
         getData(pagedata){
             console.log("获取");
             console.log();
-            
+
             vm.fetch.post(`/articles/list`,{
                 page: pagedata?pagedata.page:this.data.pageNum,
                 pageSize:　pagedata?pagedata.pageSize:10,
@@ -369,7 +369,7 @@ export default {
 }
 </script>
 <style lang='less' >
-.artical {
+.article {
     .table_content tr td:nth-child(3) .cell{
         overflow: hidden;
 

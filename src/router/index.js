@@ -7,7 +7,7 @@ let config = [
 ]
 
 let config1 = [
-    '/artical/index',                  // 文章管理
+    '/article/index',                  // 文章管理
     '/picture/index',                  // 图片管理
     '/classify/index',                 // 分类管理
     '/video/index',                    // 视频管理

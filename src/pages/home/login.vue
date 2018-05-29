@@ -65,13 +65,13 @@ export default {
                                 duration: 1000,
                                 onClose: () => {
                                     window.localStorage.setItem('userInfo', JSON.stringify(data.data.currentUser))
-                                    vm.$router.push('/artical')
+                                    vm.$router.push('/article')
                                 }
                             })
                         }
                     })
-                } 
-            })  
+                }
+            })
         },
 	}
 }
@@ -112,7 +112,7 @@ export default {
             line-height: 40px
             margin-bottom: 24px
             color: #666
-            font-size: 16px 
+            font-size: 16px
         .btn
             display: flex
             justify-content: space-between

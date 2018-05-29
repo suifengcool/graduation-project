@@ -23,7 +23,7 @@
                       <ul class="detail">
                         <li v-for="(ele,idx) in item.list" :key="idx">
                           <router-link :to="`/home/detail/${ele.id}`">
-                            <span   v-html="ele.content" ></span>                     
+                            <span   v-html="ele.title" ></span>
                           </router-link>
                         </li>
                       </ul>
@@ -74,12 +74,12 @@
       vm.fetch.get('pictures/list?type=1').then(res => {
         this.carousel.list = res.list
       })
-      
+
 
       this.dataList = []
       // 获取分类接口
       vm.fetch.get('/classify/findchildren/2').then(res => {
-        
+
         res.forEach((item, index) => {
           let obj = {}
           obj.id = item.id
@@ -92,7 +92,7 @@
           }).then(res => {
             obj.list = res.list
             console.log(111,obj);
-            
+
             this.dataList.push(obj)
           })
           //获取首页图
@@ -100,7 +100,7 @@
             this.dataList.solveImg = res.list.map(item=>{
               return item.path
             })
-            this.dataList.solveImg 
+            this.dataList.solveImg
           })
         })
 
@@ -179,7 +179,7 @@
     /* margin-top:80px; */
     .solution.solve {
       background-color: #fff;
-      padding-bottom: 70px;
+      padding-bottom: 20px;
       .layout {
         .el-row {
           .el-col-12 {
@@ -187,13 +187,14 @@
           }
         }
       }
-      .solve_img {
+      .solve_img{
+      margin-left:20px;
         height: 240px;
         img {
           height: 100%;
         }
       }
-      
+
     }
   }
 

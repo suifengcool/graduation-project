@@ -3,11 +3,10 @@
     <div class="nav_layout">
       <h1 class="nav_logo" @click="$router.push({path: '/'})">
         <div class="imgBox">
-          树莓后台管理系统
+          树莓网站
           <!-- <img src="/static/img/logo.png" alt="LOGO"> -->
         </div>
-        学训宝
-      </h1>
+        </h1>
       <Menu :default-active="active" class="el-menu-demo text-color" unique-opened mode="horizontal" active-text-color="#ffd04b">
         <NavItem v-for="(item, idx) in menus" :item="item" :index="idx + ''" :key="idx" :hide="hide"/>
       </Menu>
@@ -92,7 +91,7 @@ export default {
       overflow: hidden;
       cursor: pointer;
       .imgBox{
-        font-family: STKaiti; 
+        font-family: STKaiti;
         line-height: 80px;
         color: #FF9500;
         font-size: 30px;
@@ -102,7 +101,7 @@ export default {
         margin-top: 15px;
       }
       }
-     
+
     }
   }
 

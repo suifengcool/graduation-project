@@ -1,21 +1,20 @@
 <template>
     <div class="homeCollegeDetail main">
-      <!-- 我是学训宝学院详情页，对应的是无线联盟的案例详情页 -->
           <div class="banner_01">
            <!--<h3>{{ item.name }}</h3>-->
-          
+
             <div>
               <ul class="videpaly">
                   <li v-for="(item,i) in videList"  >
                     <!-- <router-link :to="``">
-                      <span   v-html="ele.content" ></span>                     
+                      <span   v-html="ele.content" ></span>
                     </router-link> -->
                     <!-- {{item.name}} -->
                     <video :src="item.videoUrl" controls="controls" ></video>
                   </li>
                 </ul>
             </div>
-            
+
           </div>
         <!--</el-carousel-item>-->
       <!--</el-carousel>-->
@@ -23,7 +22,7 @@
       <div class='backward' @click="$router.go(-1)">
         <i class="el-icon-arrow-left"></i><span>返回上一级</span>
       </div>
-      
+
     </div>
   </template>
   <script>
@@ -55,20 +54,20 @@ export default {
 
   created() {
     // 获取详情
-   
+
         vm.fetch.post("/video/list",{
           page: 1,
           pageSize:10
         }).then(res => {
             // console.log("this.id", this.$route.params.id);
             console.log("视频",res);
-            
+
               this.videList = res.list;
               console.log("视频",this.videList);
           });
 
-      
-    
+
+
   },
 
   methods: {
@@ -224,4 +223,3 @@ export default {
     }
 }
 </style>
-  

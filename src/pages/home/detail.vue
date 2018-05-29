@@ -7,14 +7,14 @@
                 <ul >
                   <li v-for="(item,i) in news" :key="i" @click="detail(item.id)" :class="{'el-icon-arrow-right':true,'active':item.id==activeId}">
                     <!-- <router-link :to="``">
-                      <span   v-html="ele.content" ></span>                     
+                      <span   v-html="ele.content" ></span>
                     </router-link> -->
                     {{item.name}}
                   </li>
                 </ul>
             </div>
-           
-            
+
+
           </div>
         <!--</el-carousel-item>-->
       <!--</el-carousel>-->
@@ -24,11 +24,11 @@
       </div>
       <div class="details" v-if="videList.length==0">
         <h2>{{caseInfo.title}}</h2>
-        <div class="author">作者 :{{caseInfo.author}}</div>
+        <div class="author"></div>
         <!-- <img :src="caseInfo.url || '/static/img/solve5.png'" alt="" onerror="onerror=null;src='/static/img/solve5.png'"> -->
         <div class="description" v-html="caseInfo.content">
         </div>
-      </div> 
+      </div>
     </div>
   </template>
   <script>
@@ -62,12 +62,12 @@ export default {
     // 获取详情
     if (this.flag) {
       console.log(666666);
-      
+
       this.videList = []
       console.log(666666,this.videList);
       vm.fetch.get("/classify/getLevel/" + this.id).then(res => {
         this.news = res;
-        
+
         vm.fetch.get("/classify/findchildren/" + this.news[0].id).then(res => {
           this.caseInfo = res.list[0];
         });
@@ -80,7 +80,7 @@ export default {
               this.caseInfo = res.data;
             }
           });
-      
+
     }
   },
 
@@ -115,7 +115,7 @@ export default {
         }).then(res => {
             // console.log("this.id", this.$route.params.id);
             console.log("视频",res);
-            
+
               this.videList = res.list;
               console.log("视频",this.videList);
           });
@@ -139,17 +139,17 @@ export default {
           });
       }else {
         console.log(2222);
-        
+
           vm.fetch.get("/articles/" + this.$route.params.id).then(res => {
             console.log("this.id", this.$route.params.id);
             this.videList = []
             if (res.data) {
               this.caseInfo = res.data;
-              
+
             }
           });
       }
-      
+
     }
     }
   }
@@ -167,8 +167,8 @@ export default {
   }
   .backward {
     width: 1366px;
-    height: 102px;
-    line-height: 102px;
+    height: 20px;
+    line-height: 20px;
     margin: 0 auto;
     font-size: 24px;
     font-weight: normal;
@@ -201,7 +201,7 @@ export default {
     .author {
       margin: 0 auto;
       width: 900px;
-      height: 80px;
+      height: 8px;
       text-align: center;
       font-family: SourceHanSansCN;
       font-size: 24px;
@@ -248,8 +248,8 @@ export default {
   .banner_01 {
     box-sizing: border-box;
     width: 100%;
-    height: 400px;
-    padding: 20px 100px;
+    //height: 400px;
+    //padding: 20px 100px;
     // background-image: url('/static/img/banner02.jpg');
     // background-size: cover;
 
@@ -290,4 +290,3 @@ export default {
     }
 }
 </style>
-  

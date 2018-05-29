@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/api': {
-            target: 'http://192.168.1.30:8089/',
+            target: 'http://127.0.0.1:8089/',
             changeOrigin: true,  // 为true,则本地会虚拟一个服务端接收你的请求并代你发送该请求，这样就不会有跨域问题
             pathRewrite: {
                 '^/api': ''
@@ -28,7 +28,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */

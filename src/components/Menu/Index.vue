@@ -58,7 +58,7 @@ export default {
       "name":"文章管理",
       "num":"0",
       "pid":"0",
-      "url":"/artical",
+      "url":"/article",
       "children":[]
     },{
       "deleted":0,
