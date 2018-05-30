@@ -84,7 +84,7 @@ export default {
   },
   methods:{
     beforeAvatarUpload() {
-      this.showLoading=true
+      this.percentage = 1
     },
     upload({file},onUploadProgress = this.progress){
       if(file.type.split('/')[1] != 'mp4' && file.type.split('/')[1] != 'mov' && file.type.split('/')[1] != 'quicktime'){
