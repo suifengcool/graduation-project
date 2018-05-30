@@ -8,6 +8,8 @@
       :list-type="type"
       drag
       :disabled='disabled'
+      :before-upload="beforeAvatarUpload"
+      
     >
       <video v-if="url" :src="url" class="avatar" :style="{width:width+'px',height:height+'px'}" id='video'></video>
       <video v-else="url" :src="defaultPic"  class="avatar" :style="{width:width+'px',height:height+'px'}" ref='yy'></video>
@@ -81,6 +83,9 @@ export default {
     }
   },
   methods:{
+    beforeAvatarUpload() {
+      this.showLoading=true
+    },
     upload({file},onUploadProgress = this.progress){
       if(file.type.split('/')[1] != 'mp4' && file.type.split('/')[1] != 'mov' && file.type.split('/')[1] != 'quicktime'){
         vm.$message({
